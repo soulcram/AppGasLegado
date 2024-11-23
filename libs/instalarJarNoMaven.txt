@@ -1,0 +1,50 @@
+mvn install:install-file -Dfile=ProgramaGas.jar -DgroupId=br.com.m3Tech -DartifactId=programa-gas -Dversion=1.0.0 -Dpackaging=jar
+mvn install:install-file -Dfile=comm.jar -DgroupId=br.com.m3Tech -DartifactId=comm -Dversion=1.0.0 -Dpackaging=jar
+mvn install:install-file -Dfile=derby.jar -DgroupId=br.com.m3Tech -DartifactId=derby -Dversion=1.0.0 -Dpackaging=jar
+mvn install:install-file -Dfile=derbyclient.jar -DgroupId=br.com.m3Tech -DartifactId=derbyclient -Dversion=1.0.0 -Dpackaging=jar
+mvn install:install-file -Dfile=derbyLocale_pt_BR.jar -DgroupId=br.com.m3Tech -DartifactId=derbyLocale_pt_BR -Dversion=1.0.0 -Dpackaging=jar
+mvn install:install-file -Dfile=derbynet.jar -DgroupId=br.com.m3Tech -DartifactId=derbynet -Dversion=1.0.0 -Dpackaging=jar
+mvn install:install-file -Dfile=derbyrun.jar -DgroupId=br.com.m3Tech -DartifactId=derbyrun -Dversion=1.0.0 -Dpackaging=jar
+mvn install:install-file -Dfile=derbytools.jar -DgroupId=br.com.m3Tech -DartifactId=derbytools -Dversion=1.0.0 -Dpackaging=jar
+
+<dependency>
+    <groupId>br.com.m3Tech</groupId>
+    <artifactId>programa-gas</artifactId>
+    <version>1.0.0</version>
+</dependency>
+
+<dependency>
+    <groupId>br.com.m3Tech</groupId>
+    <artifactId>comm</artifactId>
+    <version>1.0.0</version>
+</dependency>
+<dependency>
+    <groupId>br.com.m3Tech</groupId>
+    <artifactId>derby</artifactId>
+    <version>1.0.0</version>
+</dependency>
+<dependency>
+    <groupId>br.com.m3Tech</groupId>
+    <artifactId>derbyclient</artifactId>
+    <version>1.0.0</version>
+</dependency>
+<dependency>
+    <groupId>br.com.m3Tech</groupId>
+    <artifactId>derbyLocale_pt_BR</artifactId>
+    <version>1.0.0</version>
+</dependency>
+<dependency>
+    <groupId>br.com.m3Tech</groupId>
+    <artifactId>derbynet</artifactId>
+    <version>1.0.0</version>
+</dependency>
+<dependency>
+    <groupId>br.com.m3Tech</groupId>
+    <artifactId>derbyrun</artifactId>
+    <version>1.0.0</version>
+</dependency>
+<dependency>
+    <groupId>br.com.m3Tech</groupId>
+    <artifactId>derbytools</artifactId>
+    <version>1.0.0</version>
+</dependency>
