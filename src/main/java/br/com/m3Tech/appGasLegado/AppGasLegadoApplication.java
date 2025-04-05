@@ -11,7 +11,7 @@ public class AppGasLegadoApplication {
 
 	public static void main(String[] args) {
 
-//		SpringApplication.run(AppGasLegadoApplication.class, args);
+		SpringApplication.run(AppGasLegadoApplication.class, args);
 
 		Conectar.startBd();
 		ProgramaGas.CarregarConfiguracoes();
