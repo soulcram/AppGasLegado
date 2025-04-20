@@ -1,6 +1,8 @@
 package br.com.m3Tech.appGasLegado;
 
 import br.com.m3Tech.appGasLegado.dto.ClienteDto;
+import br.com.m3Tech.appGasLegado.entity.Config;
+import br.com.m3Tech.appGasLegado.service.ConfigService;
 import br.com.m3Tech.appGasLegado.utils.LocalDateDeserializer;
 import br.com.m3Tech.utils.StringUtils;
 import com.google.gson.Gson;
@@ -13,15 +15,13 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 
+
 public class Service {
 
-    @Value("${url.service}")
-    private String url;
-
-    @Value("${context.service}")
-    private String contextService;
 
     public ClienteDto getCliente(String telefone){
+
+        Config config = new ConfigService().getConfig();
 
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
@@ -32,8 +32,8 @@ public class Service {
         }
 
 
-        ResponseEntity<String> responseEntity = new RequestApiClient(new RestTemplate(), HttpMethod.GET, url)
-                .pathValue(contextService)
+        ResponseEntity<String> responseEntity = new RequestApiClient(new RestTemplate(), HttpMethod.GET, config.getUrlService().trim())
+                .pathValue(config.getContextService().trim())
                 .pathValue("cliente")
                 .pathValue("telefone")
                 .pathValue(telefone)

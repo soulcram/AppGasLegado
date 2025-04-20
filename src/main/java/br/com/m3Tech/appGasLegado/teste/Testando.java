@@ -16,7 +16,7 @@ public class Testando {
         String exibirColunas = "SELECT c.COLUMNNAME, c.COLUMNNUMBER, c.COLUMNDATATYPE \n" +
                 "FROM SYS.SYSCOLUMNS c\n" +
                 "JOIN SYS.SYSTABLES t ON c.REFERENCEID = t.TABLEID\n" +
-                "WHERE t.TABLENAME = 'CONFIG'";
+                "WHERE t.TABLENAME = 'CLIENTES'";
 
         String configs = "SELECT ID_CONFIG, DATA, IMPRESSORA, NOMEPC, PORTA, TEL_INI, TEL_FIM FROM CONFIG order by ID_CONFIG FETCH FIRST 1 ROWS ONLY";
 
@@ -31,6 +31,7 @@ public class Testando {
            return;
        }
        while(rs.next()){
+//           System.out.println(rs.getString("TABLENAME"));
            System.out.println(rs.getString("COLUMNNAME"));
            System.out.println(rs.getString("COLUMNNUMBER"));
            System.out.println(rs.getString("COLUMNDATATYPE"));

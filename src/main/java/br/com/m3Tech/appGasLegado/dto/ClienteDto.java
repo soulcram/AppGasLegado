@@ -6,10 +6,11 @@ import java.util.List;
 
 @Data
 public class ClienteDto {
-    private int idCliente;
+    private Integer idCliente;
     private String nome;
     private String documento;
     private String telefone;
     private String observacao;
     private List<ClienteEndereco> clienteEnderecos;
+    private Boolean viaApi;
 }

@@ -1,5 +1,11 @@
 package br.com.m3Tech.appGasLegado;
 
+import br.com.m3Tech.appGasLegado.dto.ClienteDto;
+import br.com.m3Tech.appGasLegado.entity.Config;
+import br.com.m3Tech.appGasLegado.service.ClienteService;
+import br.com.m3Tech.appGasLegado.service.ConfigService;
+import br.com.m3Tech.appGasLegado.utils.BinaUtils;
+import br.com.m3Tech.utils.StringUtils;
 import programagas.CadastrarNovoCliente;
 import programagas.Metodos;
 
@@ -15,6 +21,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.TooManyListenersException;
@@ -74,9 +81,9 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
         String sql = "Select * FROM config";
 
         try {
-            programagas.Conectar.pesquisar(sql);
-            if (programagas.Conectar.rs.next()) {
-                this.cbPortas.setSelectedItem(programagas.Conectar.rs.getString("PORTA"));
+            Conectar.pesquisar(sql);
+            if (Conectar.rs.next()) {
+                this.cbPortas.setSelectedItem(Conectar.rs.getString("PORTA"));
             }
         } catch (SQLException var3) {
             salvarErro(var3.getMessage());
@@ -85,6 +92,43 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
 
         ActionEvent evt = null;
         this.bConectarActionPerformed((ActionEvent)evt);
+    }
+
+    private void conectarPorta() {
+
+        Config configuracaoGlobal = new ConfigService().getConfig();
+
+        String portaComm = configuracaoGlobal.getPortaCom();
+
+        if(StringUtils.emptyOrNull(portaComm)) {
+            return ;
+        }
+
+        boolean portFound = false;
+
+        if (portaSerial != null) {
+            portaSerial.close();
+        }
+
+        listaDePortas = CommPortIdentifier.getPortIdentifiers();
+
+        while (listaDePortas.hasMoreElements()) {
+            portId = (CommPortIdentifier) listaDePortas.nextElement();
+            if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
+                if (portId.getName().equals(portaComm)) {
+                    System.out.println("Porta encontrada: " + portaComm + "\r\n");
+
+                    portFound = true;
+                    AbrirPorta();
+                    break;
+                }
+            }
+        }
+        if (!portFound) {
+            System.err.println("porta " + portaComm + " nao encontrada.");
+
+        }
+
     }
 
     public void AbrirPorta() {
@@ -233,7 +277,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
         String sql = "Update Config set PORTA = '" + porta + "' where id_config = 1 ";
 
         try {
-            programagas.Conectar.alterar(sql);
+            Conectar.alterar(sql);
         } catch (SQLException var5) {
             Logger.getLogger(programagas.Bina.class.getName()).log(Level.SEVERE, (String)null, var5);
             this.systemError.setText(var5.toString());
@@ -298,68 +342,72 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
 
     public void serialEvent(SerialPortEvent event) {
         switch (event.getEventType()) {
-            case 1:
+
+            case SerialPortEvent.BI:
+
+            case SerialPortEvent.OE:
+
+            case SerialPortEvent.FE:
+
+            case SerialPortEvent.PE:
+
+            case SerialPortEvent.CD:
+
+            case SerialPortEvent.CTS:
+
+            case SerialPortEvent.DSR:
+
+            case SerialPortEvent.RI:
+
+            case SerialPortEvent.OUTPUT_BUFFER_EMPTY:
+                break;
+
+            case SerialPortEvent.DATA_AVAILABLE:
+
                 byte[] dadosLidos1 = new byte[40];
 
-                String numero1;
-                try {
-                    if (this.inputStream.available() > 7) {
-                        Thread.sleep(1000L);
-                        this.inputStream.read(dadosLidos1);
-                        String numero = new String(dadosLidos1);
-                        atLog.append("Numero  " + numero + "  " + Integer.toString(numero.length()) + "\r\n");
-                        numero1 = this.m.numero(numero);
-                        atLog.append("Numero1 " + numero1 + "  " + Integer.toString(numero1.length()) + "\r\n");
-                        Object evt;
-                        if (numero1.length() != 0 && numero1.length() >= 5) {
-                            String numeroCerto;
-                            String tipo;
-                            if (numero1.length() == 12 & "9".equals(numero1.substring(3, 4))) {
-                                tipo = "Celular";
-                                numeroCerto = numero1.substring(1, 12);
-                                atLog.append("Numero certo: " + numeroCerto + "\r\n");
-                            } else if (numero1.length() == 11 & !"9".equals(numero1.substring(3, 4)) & !"1".equals(numero1.substring(3, 4)) & !"8".equals(numero1.substring(3, 4)) & !"7".equals(numero1.substring(3, 4)) & !"6".equals(numero1.substring(3, 4))) {
-                                tipo = "Fixo";
-                                numeroCerto = numero1.substring(1, 11);
-                                atLog.append("Numero certo: " + numeroCerto + "\r\n");
-                            } else if ("1".equals(numero1.substring(3, 4))) {
-                                tipo = "Erro";
-                                numeroCerto = this.encontrarString(numero1);
-                                atLog.append("Numero certo: " + numeroCerto + "\r\n");
-                            } else {
-                                tipo = "Erro";
-                                numeroCerto = this.encontrarString(numero1);
-                                atLog.append("Numero certo: " + numeroCerto + " Erro." + "\r\n");
-                            }
 
-                            this.carregarTela(numeroCerto, tipo);
-                            this.portaSerial.close();
-                            evt = null;
-                            this.bConectarActionPerformed((ActionEvent)evt);
-                        } else {
-                            this.portaSerial.close();
-                            evt = null;
-                            this.bConectarActionPerformed((ActionEvent)evt);
+
+                try {
+
+                    if (inputStream.available() > 7) {
+
+                        Thread.sleep(1000);
+
+                        inputStream.read(dadosLidos1);
+
+                        String numero = new String(dadosLidos1);
+
+                        System.out.println("Numero  " + numero + "  " + numero.length() + "\r\n");
+
+                        String numero1 = m.numero(numero);
+
+                        System.out.println("Numero1 " + numero1 + "  " + numero1.length() + "\r\n");
+
+                        if(numero1.length() > 9){
+                            String numeroCerto = BinaUtils.encontrarTelefone(numero1);
+
+                            this.carregarTela(numeroCerto, numeroCerto.length() == 11 ? "Celular" : "Fixo");
+                            portaSerial.close();
+                            conectarPorta();
+                        }else{
+                            portaSerial.close();
+                            conectarPorta();
                         }
+
                     }
-                } catch (Exception var8) {
-                    salvarErro(var8.getMessage());
-                    atLog.append(var8.getMessage() + "\r\n");
-                    this.portaSerial.close();
-                    numero1 = null;
-                    //this.bConectarActionPerformed(numero1);
+
+                } catch (Exception ex) {
+                    System.err.println(ex.getMessage());
+
+                    portaSerial.close();
+                    conectarPorta();
+
                 }
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            case 8:
-            case 9:
-            case 10:
-            default:
+
+                break;
         }
+
     }
 
     private String encontrarString(String numero) {
@@ -380,16 +428,31 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
         String[] conteudo = new String[]{Integer.toString(i), tipo, telefone};
         DefaultTableModel model = (DefaultTableModel)this.tBina.getModel();
         model.addRow(conteudo);
-        String sql = "SELECT * FROM CLIENTES where telefone =  '" + telefone + "'";
+
 
         try {
-            programagas.Conectar.pesquisar(sql);
-            if (Conectar.rs.next()) {
-                (new TelaPedidos(telefone)).setVisible(true);
-            } else {
-                CadastrarNovoCliente cnc = new CadastrarNovoCliente();
-                cnc.setVisible(true);
-                cnc.telefoneTxt.setText(telefone);
+
+            Service service = new Service();
+
+            ClienteDto cliente = service.getCliente(telefone);
+
+            if(cliente != null){
+                cliente.setViaApi(true);
+                (new TelaPedidos(cliente)).setVisible(true);
+                new ClienteService().salvarCliente(cliente);
+            }else {
+
+                ClienteDto novoCliente = new ClienteDto();
+                novoCliente.setTelefone(telefone);
+                String sql = "SELECT * FROM CLIENTES where telefone =  '" + telefone + "'";
+                Conectar.pesquisar(sql);
+                if (Conectar.rs.next()) {
+                    (new TelaPedidos(novoCliente)).setVisible(true);
+                } else {
+                    CadastrarNovoCliente cnc = new CadastrarNovoCliente();
+                    cnc.setVisible(true);
+                    cnc.telefoneTxt.setText(telefone);
+                }
             }
         } catch (SQLException var8) {
             salvarErro(var8.getMessage());

@@ -1,5 +1,8 @@
 package br.com.m3Tech.appGasLegado;
 
+import br.com.m3Tech.appGasLegado.dto.ClienteDto;
+import br.com.m3Tech.appGasLegado.dto.ClienteEndereco;
+import org.apache.commons.lang3.BooleanUtils;
 import programagas.CadastrarNovoCliente;
 import programagas.Conectar;
 import programagas.ProgramaGas;
@@ -88,19 +91,19 @@ public class TelaPedidos extends JFrame {
     private JLabel telefoneTxt;
     private JTextField txtTotal;
 
-    public TelaPedidos(String numero) {
+    public TelaPedidos(ClienteDto cliente) {
         this.initComponents();
-        this.telefone = numero;
+        this.telefone = cliente.getTelefone();
         String loadProdutos = "Select * from PRODUTOS";
 
         try {
-            programagas.Conectar.pesquisar(loadProdutos);
+            Conectar.pesquisar(loadProdutos);
 
-            while(programagas.Conectar.rs.next()) {
-                this.produtosCol.addItem(programagas.Conectar.rs.getString("NOME"));
+            while(Conectar.rs.next()) {
+                this.produtosCol.addItem(Conectar.rs.getString("NOME"));
             }
         } catch (SQLException var10) {
-            programagas.ProgramaGas.salvarErro(var10.getMessage() + "  Local:  " + var10.getLocalizedMessage());
+            ProgramaGas.salvarErro(var10.getMessage() + "  Local:  " + var10.getLocalizedMessage());
             this.systemError.setText(var10.toString());
         }
 
@@ -108,7 +111,7 @@ public class TelaPedidos extends JFrame {
         this.jTable2.getColumnModel().getColumn(1).setCellEditor(new DefaultCellEditor(this.quantCol));
         ActionEvent evt = null;
         this.jButton1ActionPerformed((ActionEvent)evt);
-        this.preencher(numero);
+        this.preencher(cliente);
 
         try {
             this.boxImpressoras.removeAllItems();
@@ -122,10 +125,10 @@ public class TelaPedidos extends JFrame {
                 this.boxImpressoras.addItem(p.getName());
             }
         } catch (Exception var9) {
-            programagas.ProgramaGas.salvarErro(var9.getMessage() + "  Local:  " + var9.getLocalizedMessage());
+            ProgramaGas.salvarErro(var9.getMessage() + "  Local:  " + var9.getLocalizedMessage());
         }
 
-        this.boxImpressoras.setSelectedItem(programagas.ProgramaGas.Impressora);
+        this.boxImpressoras.setSelectedItem(ProgramaGas.Impressora);
     }
 
     private String gerarNotaTermica() {
@@ -157,63 +160,109 @@ public class TelaPedidos extends JFrame {
         return nota;
     }
 
-    private void preencher(String numero) {
-        String sql = "SELECT * FROM CLIENTES where telefone =  '" + numero + "'";
+    private void preencher(ClienteDto cliente) {
 
-        try {
-            programagas.Conectar.pesquisar(sql);
+        if(BooleanUtils.toBooleanDefaultIfNull(cliente.getViaApi(),false)){
 
-            while(programagas.Conectar.rs.next()) {
-                this.id_cliente = programagas.Conectar.rs.getString("ID_CLIENTE");
-                this.nome = programagas.Conectar.rs.getString("NOME");
-                this.id_endereco = programagas.Conectar.rs.getString("ID_ENDERECO");
-                this.numCasa = programagas.Conectar.rs.getString("NUMERO");
-                this.obs = programagas.Conectar.rs.getString("OBSERVACAO");
+            ClienteEndereco clienteEndereco = cliente.getClienteEnderecos().get(0);
+
+            this.telefoneTxt.setText(cliente.getTelefone());
+
+
+            String sql = "SELECT ID_CLIENTE FROM CLIENTES where telefone =  '" + cliente.getTelefone() + "'";
+
+            try {
+                Conectar.pesquisar(sql);
+
+                while (Conectar.rs.next()) {
+                    this.id_cliente = Conectar.rs.getString("ID_CLIENTE");
+                }
+            } catch (SQLException var9) {
+                ProgramaGas.salvarErro(var9.getMessage() + "  Local:  " + var9.getLocalizedMessage());
+                this.systemError.setText(var9.toString());
             }
-        } catch (SQLException var9) {
-            programagas.ProgramaGas.salvarErro(var9.getMessage() + "  Local:  " + var9.getLocalizedMessage());
-            this.systemError.setText(var9.toString());
-        }
 
-        String sql1 = "SELECT * FROM ENDERECO where ID_CEP =  " + this.id_endereco + "";
+            String sql2 = "SELECT * FROM PEDIDOS where ID_CLIENTEp =  " + this.id_cliente + "";
 
-        try {
-            programagas.Conectar.pesquisar(sql1);
+            try {
+                Conectar.pesquisar(sql2);
+                DefaultTableModel model = (DefaultTableModel) this.jTable1.getModel();
 
-            while(programagas.Conectar.rs.next()) {
-                this.cidade = programagas.Conectar.rs.getString("CIDADE");
-                this.logradouro = programagas.Conectar.rs.getString("LOGRADOURO");
-                this.bairro = programagas.Conectar.rs.getString("BAIRRO");
-                this.cep = programagas.Conectar.rs.getString("CEP");
-                this.tp_logradouro = programagas.Conectar.rs.getString("TP_LOGRADOURO");
-                this.referencia = programagas.Conectar.rs.getString("REFERENCIA");
+                while (Conectar.rs.next()) {
+                    String[] conteudo = new String[]{Conectar.rs.getString("PEDIDO"), Conectar.rs.getString("formadepagamento"), Conectar.rs.getString("ENTREGADOR"), Conectar.rs.getString("STATUS"), Conectar.rs.getString("DIA")};
+                    model.addRow(conteudo);
+                }
+            } catch (SQLException var7) {
+                ProgramaGas.salvarErro(var7.getMessage() + "  Local:  " + var7.getLocalizedMessage());
+                this.systemError.setText(var7.toString());
             }
-        } catch (SQLException var8) {
-            programagas.ProgramaGas.salvarErro(var8.getMessage() + "  Local:  " + var8.getLocalizedMessage());
-            this.systemError.setText(var8.toString());
-        }
 
-        String sql2 = "SELECT * FROM PEDIDOS where ID_CLIENTEp =  " + this.id_cliente + "";
+            this.idTxt.setText(this.id_cliente);
+            this.nomeTxt.setText(cliente.getNome());
+            this.endTxt.setText( clienteEndereco.getEndereco().getLogradouro() + ", " + clienteEndereco.getNumero() + " - " + clienteEndereco.getEndereco().getBairro());
+            this.obsTxt.setText(clienteEndereco.getComplemento());
+            this.pedidoObs.setText(cliente.getObservacao());
 
-        try {
-            programagas.Conectar.pesquisar(sql2);
-            DefaultTableModel model = (DefaultTableModel)this.jTable1.getModel();
+        }else {
 
-            while(programagas.Conectar.rs.next()) {
-                String[] conteudo = new String[]{programagas.Conectar.rs.getString("PEDIDO"), programagas.Conectar.rs.getString("formadepagamento"), programagas.Conectar.rs.getString("ENTREGADOR"), programagas.Conectar.rs.getString("STATUS"), programagas.Conectar.rs.getString("DIA")};
-                model.addRow(conteudo);
+
+            String sql = "SELECT * FROM CLIENTES where telefone =  '" + cliente.getTelefone() + "'";
+
+            try {
+                Conectar.pesquisar(sql);
+
+                while (Conectar.rs.next()) {
+                    this.id_cliente = Conectar.rs.getString("ID_CLIENTE");
+                    this.nome = Conectar.rs.getString("NOME");
+                    this.id_endereco = Conectar.rs.getString("ID_ENDERECO");
+                    this.numCasa = Conectar.rs.getString("NUMERO");
+                    this.obs = Conectar.rs.getString("OBSERVACAO");
+                }
+            } catch (SQLException var9) {
+                ProgramaGas.salvarErro(var9.getMessage() + "  Local:  " + var9.getLocalizedMessage());
+                this.systemError.setText(var9.toString());
             }
-        } catch (SQLException var7) {
-            programagas.ProgramaGas.salvarErro(var7.getMessage() + "  Local:  " + var7.getLocalizedMessage());
-            this.systemError.setText(var7.toString());
-        }
 
-        this.telefoneTxt.setText(numero);
-        this.idTxt.setText(this.id_cliente);
-        this.nomeTxt.setText(this.nome);
-        this.endTxt.setText(this.tp_logradouro + ": " + this.logradouro + ", " + this.numCasa + " - " + this.bairro);
-        this.obsTxt.setText(this.obs);
-        this.pedidoObs.setText(this.obs);
+            String sql1 = "SELECT * FROM ENDERECO where ID_CEP =  " + this.id_endereco + "";
+
+            try {
+                Conectar.pesquisar(sql1);
+
+                while (Conectar.rs.next()) {
+                    this.cidade = Conectar.rs.getString("CIDADE");
+                    this.logradouro = Conectar.rs.getString("LOGRADOURO");
+                    this.bairro = Conectar.rs.getString("BAIRRO");
+                    this.cep = Conectar.rs.getString("CEP");
+                    this.tp_logradouro = Conectar.rs.getString("TP_LOGRADOURO");
+                    this.referencia = Conectar.rs.getString("REFERENCIA");
+                }
+            } catch (SQLException var8) {
+                ProgramaGas.salvarErro(var8.getMessage() + "  Local:  " + var8.getLocalizedMessage());
+                this.systemError.setText(var8.toString());
+            }
+
+            String sql2 = "SELECT * FROM PEDIDOS where ID_CLIENTEp =  " + this.id_cliente + "";
+
+            try {
+                Conectar.pesquisar(sql2);
+                DefaultTableModel model = (DefaultTableModel) this.jTable1.getModel();
+
+                while (Conectar.rs.next()) {
+                    String[] conteudo = new String[]{Conectar.rs.getString("PEDIDO"), Conectar.rs.getString("formadepagamento"), Conectar.rs.getString("ENTREGADOR"), Conectar.rs.getString("STATUS"), Conectar.rs.getString("DIA")};
+                    model.addRow(conteudo);
+                }
+            } catch (SQLException var7) {
+                ProgramaGas.salvarErro(var7.getMessage() + "  Local:  " + var7.getLocalizedMessage());
+                this.systemError.setText(var7.toString());
+            }
+
+            this.telefoneTxt.setText(cliente.getTelefone());
+            this.idTxt.setText(this.id_cliente);
+            this.nomeTxt.setText(this.nome);
+            this.endTxt.setText(this.tp_logradouro + ": " + this.logradouro + ", " + this.numCasa + " - " + this.bairro);
+            this.obsTxt.setText(this.obs);
+            this.pedidoObs.setText(this.obs);
+        }
     }
 
     private void initComponents() {

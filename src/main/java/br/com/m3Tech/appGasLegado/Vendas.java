@@ -1,5 +1,7 @@
 package br.com.m3Tech.appGasLegado;
 
+import br.com.m3Tech.appGasLegado.dto.ClienteDto;
+import br.com.m3Tech.appGasLegado.service.ClienteService;
 import programagas.CadastrarNovoCliente;
 import programagas.Mascaras;
 import programagas.Metodos;
@@ -234,24 +236,36 @@ public class Vendas extends JFrame {
     }
 
     private void VK_enter(ActionEvent evt) {
-        String lista = this.m.numero(this.entradaTelTxt.getText());
-        String sql = "SELECT * FROM CLIENTES where telefone =  '" + lista + "'";
+        String numeroTelefoneVerificado = this.m.numero(this.entradaTelTxt.getText());
 
-        try {
-            Conectar.pesquisar(sql);
-            if (Conectar.rs.next()) {
-                (new TelaPedidos(lista)).setVisible(true);
-            } else {
-                CadastrarNovoCliente cnc = new CadastrarNovoCliente();
-                cnc.setVisible(true);
-                cnc.telefoneTxt.setText(lista);
+        ClienteDto cliente = new Service().getCliente(numeroTelefoneVerificado);
+
+        if(cliente != null){
+            cliente.setViaApi(true);
+            (new TelaPedidos(cliente)).setVisible(true);
+            new ClienteService().salvarCliente(cliente);
+        }else {
+
+            String sql = "SELECT * FROM CLIENTES where telefone =  '" + numeroTelefoneVerificado + "'";
+
+            try {
+                Conectar.pesquisar(sql);
+                if (Conectar.rs.next()) {
+                    ClienteDto novoCliente = new ClienteDto();
+                    novoCliente.setTelefone(numeroTelefoneVerificado);
+                    (new TelaPedidos(novoCliente)).setVisible(true);
+                } else {
+                    CadastrarNovoCliente cnc = new CadastrarNovoCliente();
+                    cnc.setVisible(true);
+                    cnc.telefoneTxt.setText(numeroTelefoneVerificado);
+                }
+            } catch (SQLException var5) {
+                ProgramaGas.salvarErro(var5.getMessage() + "  Local:  " + var5.getLocalizedMessage());
+                systemError.setText(var5.toString());
             }
-        } catch (SQLException var5) {
-            ProgramaGas.salvarErro(var5.getMessage() + "  Local:  " + var5.getLocalizedMessage());
-            systemError.setText(var5.toString());
-        }
 
-        salvar();
+            salvar();
+        }
         this.entradaTelTxt.setText("");
     }
 
