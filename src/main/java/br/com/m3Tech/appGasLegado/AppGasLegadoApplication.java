@@ -1,5 +1,6 @@
 package br.com.m3Tech.appGasLegado;
 
+import br.com.m3Tech.appGasLegado.utils.AtualizarBanco;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -15,6 +16,9 @@ public class AppGasLegadoApplication {
 		SpringApplication.run(AppGasLegadoApplication.class, args);
 
 		Conectar.startBd();
+
+		AtualizarBanco.atualizar();
+
 		ProgramaGas.CarregarConfiguracoes();
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		Dimension d = tk.getScreenSize();

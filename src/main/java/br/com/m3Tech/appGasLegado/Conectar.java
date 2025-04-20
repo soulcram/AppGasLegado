@@ -19,16 +19,17 @@ public class Conectar {
     public Conectar() {
     }
 
-    public static void pesquisar(String sql) throws SQLException {
+    public static ResultSet pesquisar(String sql) throws SQLException {
         try {
             Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
             Connection con = DriverManager.getConnection("jdbc:derby:C:\\BancoDeDados\\ProgramaGas", "soulcram", "p4r4tud0");
             Statement stm = con.createStatement();
             rs = stm.executeQuery(sql);
+            return rs;
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException var3) {
-            programagas.ProgramaGas.salvarErro(var3.getMessage() + "  Local:  " + var3.getLocalizedMessage());
+            ProgramaGas.salvarErro(var3.getMessage() + "  Local:  " + var3.getLocalizedMessage());
         }
-
+        return null;
     }
 
     public static void alterar(String sql) throws SQLException {
@@ -38,7 +39,7 @@ public class Conectar {
             Statement stm = con.createStatement();
             stm.executeUpdate(sql);
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException var3) {
-            programagas.ProgramaGas.salvarErro(var3.getMessage() + "  Local:  " + var3.getLocalizedMessage());
+            ProgramaGas.salvarErro(var3.getMessage() + "  Local:  " + var3.getLocalizedMessage());
         }
 
     }

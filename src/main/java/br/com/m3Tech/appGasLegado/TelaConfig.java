@@ -1,5 +1,8 @@
 package br.com.m3Tech.appGasLegado;
 
+import br.com.m3Tech.appGasLegado.entity.Config;
+import br.com.m3Tech.appGasLegado.service.ConfigService;
+import br.com.m3Tech.utils.StringUtils;
 import programagas.Mascaras;
 
 import java.awt.Color;
@@ -19,15 +22,7 @@ import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.DocFlavor.SERVICE_FORMATTED;
 import javax.print.attribute.AttributeSet;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.Border;
@@ -37,17 +32,25 @@ import javax.swing.text.DefaultFormatterFactory;
 public class TelaConfig extends JFrame {
 
     private JButton bOK;
-    private JButton bSalvarData;
-    private JButton bSalvarImpressora;
-    private JButton bSalvarPorta;
+    private JButton bSalvar;
     private JComboBox<String> boxImpressoras;
     private JComboBox<String> comboBoxPortas;
     private JLabel jLabel1;
     private JLabel jLabel3;
     private JLabel jLabel4;
+    private JLabel jLabelNomeLoja;
+    private JLabel jLabelUrlService;
+    private JLabel jLabelContextService;
+    private JLabel jLabelTelIni;
+    private JLabel jLabelTelFim;
     private JPanel jPanel1;
     private JLabel systemError;
     private JFormattedTextField txtNovaData;
+    private JTextField txtIniTel;
+    private JTextField txtFimTel;
+    private JTextField txtNomeLoja;
+    private JTextField txtUrlService;
+    private JTextField txtContextService;
 
     public TelaConfig() {
         this.initComponents();
@@ -76,149 +79,199 @@ public class TelaConfig extends JFrame {
             programagas.ProgramaGas.salvarErro(var9.getMessage() + "  Local:  " + var9.getLocalizedMessage());
         }
 
+        //Carregando Configurações do banco
+        ConfigService configService = new ConfigService();
+
+        Config config = configService.getConfig();
+        if(config != null) {
+            if (!StringUtils.emptyOrNull(config.getPortaCom())) {
+                this.comboBoxPortas.setSelectedItem(config.getPortaCom());
+            }
+            if (!StringUtils.emptyOrNull(config.getImpressora())) {
+                this.boxImpressoras.setSelectedItem(config.getImpressora());
+            }
+            if (!StringUtils.emptyOrNull(config.getData())) {
+                this.txtNovaData.setText(config.getData());
+            }
+            if (!StringUtils.emptyOrNull(config.getNomeloja())) {
+                this.txtNomeLoja.setText(config.getNomeloja());
+            }
+            if (!StringUtils.emptyOrNull(config.getUrlService())) {
+                this.txtUrlService.setText(config.getUrlService());
+            }
+            if (!StringUtils.emptyOrNull(config.getContextService())) {
+                this.txtContextService.setText(config.getContextService());
+            }
+            if (!StringUtils.emptyOrNull(config.getIniTel())) {
+                this.txtIniTel.setText(config.getIniTel());
+            }
+            if (!StringUtils.emptyOrNull(config.getFimTel())) {
+                this.txtFimTel.setText(config.getFimTel());
+            }
+        }
+
     }
 
     private void initComponents() {
         this.jPanel1 = new JPanel();
-        this.comboBoxPortas = new JComboBox();
-        this.jLabel1 = new JLabel();
-        this.bSalvarPorta = new JButton();
-        this.bSalvarData = new JButton();
-        this.txtNovaData = new JFormattedTextField();
-        this.jLabel3 = new JLabel();
-        this.boxImpressoras = new JComboBox();
-        this.bSalvarImpressora = new JButton();
-        this.jLabel4 = new JLabel();
+
         this.bOK = new JButton();
         this.systemError = new JLabel();
         this.setDefaultCloseOperation(2);
         this.setTitle("Configurações");
-        this.comboBoxPortas.setBorder((Border)null);
+
+        this.jLabel1 = new JLabel();
+        this.jLabel1.setBounds(10,10,150,30);
         this.jLabel1.setFont(new Font("Tahoma", 1, 12));
-        this.jLabel1.setHorizontalAlignment(0);
         this.jLabel1.setText("Portas Disponiveis");
-        this.bSalvarPorta.setText("Salvar porta principal");
-        this.bSalvarPorta.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                bSalvarPortaActionPerformed(evt);
-            }
-        });
-        this.bSalvarData.setText("Salvar Data");
-        this.bSalvarData.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                bSalvarDataActionPerformed(evt);
-            }
-        });
+
+        this.comboBoxPortas = new JComboBox();
+        this.comboBoxPortas.setBorder((Border)null);
+        this.comboBoxPortas.setBounds(180,10,250,30);
+
+        this.jLabel3 = new JLabel();
+        this.jLabel3.setBounds(10,50,150,30);
+        this.jLabel3.setFont(new Font("Tahoma", 1, 12));
+        this.jLabel3.setText("Impressoras Disponiveis");
+
+        this.boxImpressoras = new JComboBox();
+        this.boxImpressoras.setBorder((Border)null);
+        this.boxImpressoras.setBounds(180,50,250,30);
+
+        this.jLabel4 = new JLabel();
+        this.jLabel4.setBounds(10,90,150,30);
+        this.jLabel4.setFont(new Font("Tahoma", 1, 12));
+        this.jLabel4.setText("Nova Data Limite");
+
+        this.txtNovaData = new JFormattedTextField();
         this.txtNovaData.setFormatterFactory(new DefaultFormatterFactory(new DateFormatter()));
         this.txtNovaData.addFocusListener(new FocusAdapter() {
             public void focusGained(FocusEvent evt) {
                 txtNovaDataFocusGained(evt);
             }
         });
-        this.jLabel3.setFont(new Font("Tahoma", 1, 12));
-        this.jLabel3.setHorizontalAlignment(0);
-        this.jLabel3.setText("Impressoras Disponiveis");
-        this.boxImpressoras.setBorder((Border)null);
-        this.bSalvarImpressora.setText("Salvar impressora  principal");
-        this.bSalvarImpressora.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                bSalvarImpressoraActionPerformed(evt);
-            }
-        });
-        this.jLabel4.setFont(new Font("Tahoma", 1, 12));
-        this.jLabel4.setHorizontalAlignment(0);
-        this.jLabel4.setText("Nova Data Limite");
+        this.txtNovaData.setBounds(180,90,250,30);
+
+        this.jLabelNomeLoja = new JLabel();
+        this.jLabelNomeLoja.setBounds(10,130,150,30);
+        this.jLabelNomeLoja.setFont(new Font("Tahoma", 1, 12));
+        this.jLabelNomeLoja.setText("Nome Loja");
+
+        this.txtNomeLoja = new JTextField();
+        this.txtNomeLoja.setBounds(180,130,250,30);
+
+        this.jLabelUrlService = new JLabel();
+        this.jLabelUrlService.setBounds(10,170,150,30);
+        this.jLabelUrlService.setFont(new Font("Tahoma", 1, 12));
+        this.jLabelUrlService.setText("Url Service");
+
+        this.txtUrlService = new JTextField();
+        this.txtUrlService.setBounds(180,170,250,30);
+
+        this.jLabelContextService = new JLabel();
+        this.jLabelContextService.setBounds(10,210,150,30);
+        this.jLabelContextService.setFont(new Font("Tahoma", 1, 12));
+        this.jLabelContextService.setText("Context Service");
+
+        this.txtContextService = new JTextField();
+        this.txtContextService.setBounds(180,210,250,30);
+
+        this.jLabelTelIni = new JLabel();
+        this.jLabelTelIni.setBounds(10,250,150,30);
+        this.jLabelTelIni.setFont(new Font("Tahoma", 1, 12));
+        this.jLabelTelIni.setText("Tel Ini");
+
+        this.txtIniTel = new JTextField();
+        this.txtIniTel.setBounds(180,250,250,30);
+
+        this.jLabelTelFim = new JLabel();
+        this.jLabelTelFim.setBounds(10,290,150,30);
+        this.jLabelTelFim.setFont(new Font("Tahoma", 1, 12));
+        this.jLabelTelFim.setText("Tel Fim");
+
+        this.txtFimTel = new JTextField();
+        this.txtFimTel.setBounds(180,290,250,30);
+
+
         this.bOK.setText("OK");
+        this.bOK.setBounds(300,460,60,30);
         this.bOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 bOKActionPerformed(evt);
             }
         });
 
-        GroupLayout jPanel1Layout = new GroupLayout(this.jPanel1);
-        this.jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING, false).addGroup(jPanel1Layout.createSequentialGroup().addContainerGap().addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING, false).addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.jLabel1, -2, 183, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.comboBoxPortas, -2, 183, -2)).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.jLabel3, -2, 183, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.boxImpressoras, -2, 183, -2))).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.jLabel4, -2, 183, -2).addPreferredGap(ComponentPlacement.RELATED, -1, 32767).addComponent(this.txtNovaData, -2, 183, -2))).addGap(34, 34, 34).addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING, false).addComponent(this.bSalvarImpressora, -1, -1, 32767).addComponent(this.bSalvarPorta, -1, -1, 32767).addComponent(this.bSalvarData, -1, -1, 32767))).addGroup(jPanel1Layout.createSequentialGroup().addGap(31, 31, 31).addPreferredGap(ComponentPlacement.RELATED, -1, 32767).addComponent(this.bOK))).addContainerGap(41, 32767)));
-        jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addContainerGap().addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE).addComponent(this.jLabel1).addComponent(this.comboBoxPortas, -2, 23, -2).addComponent(this.bSalvarPorta)).addGap(28, 28, 28).addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE).addComponent(this.jLabel3).addComponent(this.boxImpressoras, -2, 23, -2).addComponent(this.bSalvarImpressora)).addGap(18, 18, 18).addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE).addComponent(this.txtNovaData, -2, -1, -2).addComponent(this.bSalvarData).addComponent(this.jLabel4)).addPreferredGap(ComponentPlacement.RELATED, 217, 32767).addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addComponent(this.bOK, -2, 41, -2)).addContainerGap()));
-        this.systemError.setForeground(new Color(204, 0, 0));
-        GroupLayout layout = new GroupLayout(this.getContentPane());
-        this.getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING).addGroup(layout.createSequentialGroup().addContainerGap().addGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(this.jPanel1, -1, -1, 32767).addGroup(layout.createSequentialGroup().addComponent(this.systemError, -2, 605, -2).addGap(0, 13, 32767))).addContainerGap()));
-        layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(this.jPanel1, -2, -1, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.systemError, -1, -1, 32767).addContainerGap()));
-        this.pack();
+        jPanel1.setBounds(10,10,600,600);
+        jPanel1.setLayout(null);
+        jPanel1.setBackground(Color.WHITE);
+
+        jPanel1.add(jLabel1);
+        jPanel1.add(comboBoxPortas);
+
+        jPanel1.add(jLabel3);
+        jPanel1.add(boxImpressoras);
+
+        jPanel1.add(jLabel4);
+        jPanel1.add(txtNovaData);
+
+        jPanel1.add(jLabelNomeLoja);
+        jPanel1.add(txtNomeLoja);
+
+        jPanel1.add(jLabelUrlService);
+        jPanel1.add(txtUrlService);
+
+        jPanel1.add(jLabelContextService);
+        jPanel1.add(txtContextService);
+
+        jPanel1.add(jLabelTelIni);
+        jPanel1.add(txtIniTel);
+
+        jPanel1.add(jLabelTelFim);
+        jPanel1.add(txtFimTel);
+
+
+        jPanel1.add(bOK);
+
+        this.setBounds(10, 10, 600, 600);
+        this.setLayout(null);
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.add(jPanel1);
+        this.repaint();
+
     }
 
-    private void bSalvarDataActionPerformed(ActionEvent evt) {
-        String novaData = this.txtNovaData.getText();
-        String sql = "UPDATE CONFIG set DATA = '" + novaData + "' where id_config = 1";
-
-        try {
-            programagas.Conectar.alterar(sql);
-            this.systemError.setText("Nova Data salva.");
-        } catch (SQLException var5) {
-            programagas.ProgramaGas.salvarErro(var5.getMessage() + "  Local:  " + var5.getLocalizedMessage());
-            this.systemError.setText(var5.getMessage());
-        }
-
-    }
 
     private void bOKActionPerformed(ActionEvent evt) {
+
+        Config config = new Config();
+
+        String novaData = this.txtNovaData.getText();
+        String impressora = this.boxImpressoras.getSelectedItem() != null ? this.boxImpressoras.getSelectedItem().toString() : null;
+        String porta = this.comboBoxPortas.getSelectedItem() != null ? this.comboBoxPortas.getSelectedItem().toString() : null;
+        String nomeLoja = this.txtNomeLoja.getText();
+        String urlService = this.txtUrlService.getText();
+        String contextService = !StringUtils.emptyOrNull(this.txtContextService.getText()) ? this.txtContextService.getText() : "appConsigaz";
+        String telIni = this.txtIniTel.getText();
+        String telFim = this.txtFimTel.getText();
+
+        config.setData(novaData);
+        config.setImpressora(impressora);
+        config.setPortaCom(porta);
+        config.setNomeloja(nomeLoja);
+        config.setUrlService(urlService);
+        config.setContextService(contextService);
+        config.setIniTel(telIni);
+        config.setFimTel(telFim);
+
+       new ConfigService().salvarConfig(config);
+
         this.dispose();
     }
-
-    private void bSalvarImpressoraActionPerformed(ActionEvent evt) {
-        String impressora = this.boxImpressoras.getSelectedItem().toString();
-        String sql = "UPDATE CONFIG set IMPRESSORA = '" + impressora + "' where id_config = 1";
-
-        try {
-            programagas.Conectar.alterar(sql);
-            this.systemError.setText("Impressora salva.");
-        } catch (SQLException var5) {
-            programagas.ProgramaGas.salvarErro(var5.getMessage() + "  Local:  " + var5.getLocalizedMessage());
-            this.systemError.setText(var5.getMessage());
-        }
-
-    }
-
-    private void bSalvarPortaActionPerformed(ActionEvent evt) {
-        String porta = this.comboBoxPortas.getSelectedItem().toString();
-        String sql = "UPDATE CONFIG set PORTA = '" + porta + "' where id_config = 1";
-
-        try {
-            Conectar.alterar(sql);
-            this.systemError.setText("Porta preferencial salva.");
-        } catch (SQLException var5) {
-            programagas.ProgramaGas.salvarErro(var5.getMessage() + "  Local:  " + var5.getLocalizedMessage());
-            this.systemError.setText(var5.getMessage());
-        }
-
-    }
-
 
 
     private void txtNovaDataFocusGained(FocusEvent evt) {
         this.txtNovaData.setCaretPosition(0);
     }
 
-    public static void main(String[] args) {
-        try {
-            UIManager.LookAndFeelInfo[] var1 = UIManager.getInstalledLookAndFeels();
-            int var2 = var1.length;
-
-            for(int var3 = 0; var3 < var2; ++var3) {
-                UIManager.LookAndFeelInfo info = var1[var3];
-                if ("Nimbus".equals(info.getName())) {
-                    UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException | ClassNotFoundException var5) {
-            Logger.getLogger(programagas.TelaConfig.class.getName()).log(Level.SEVERE, (String)null, var5);
-            ProgramaGas.salvarErro(var5.getMessage() + "  Local:  " + var5.getLocalizedMessage());
-        }
-
-        EventQueue.invokeLater(() -> {
-            (new programagas.TelaConfig()).setVisible(true);
-        });
-    }
 }
 
