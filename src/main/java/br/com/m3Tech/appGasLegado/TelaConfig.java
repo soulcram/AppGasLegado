@@ -246,8 +246,8 @@ public class TelaConfig extends JFrame {
         Config config = new Config();
 
         String novaData = this.txtNovaData.getText();
-        String impressora = this.boxImpressoras.getSelectedItem() != null ? this.boxImpressoras.getSelectedItem().toString() : null;
-        String porta = this.comboBoxPortas.getSelectedItem() != null ? this.comboBoxPortas.getSelectedItem().toString() : null;
+        String impressora = this.boxImpressoras.getSelectedItem() != null ? this.boxImpressoras.getSelectedItem().toString() : "Generic";
+        String porta = this.comboBoxPortas.getSelectedItem() != null ? this.comboBoxPortas.getSelectedItem().toString() : "Com1";
         String nomeLoja = this.txtNomeLoja.getText();
         String urlService = this.txtUrlService.getText();
         String contextService = !StringUtils.emptyOrNull(this.txtContextService.getText()) ? this.txtContextService.getText() : "appConsigaz";

@@ -49,35 +49,35 @@ public class ConfigService {
         String sql = "UPDATE CONFIG set ";
 
         if(!StringUtils.emptyOrNull(config.getData())){
-            sql += " DATA = '" + config.getData() + "', ";
+            sql += " DATA = '" + config.getData().trim() + "', ";
         }
 
         if(!StringUtils.emptyOrNull(config.getImpressora())){
-            sql += " IMPRESSORA = '" + config.getImpressora() + " ',";
+            sql += " IMPRESSORA = '" + config.getImpressora().trim() + "',";
         }
 
         if(!StringUtils.emptyOrNull(config.getPortaCom())){
-            sql += " PORTA = '" + config.getPortaCom() + " ',";
+            sql += " PORTA = '" + config.getPortaCom().trim() + "',";
         }
 
         if(!StringUtils.emptyOrNull(config.getNomeloja())){
-            sql += " NOME_LOJA = '" + config.getNomeloja() + " ',";
+            sql += " NOME_LOJA = '" + config.getNomeloja().trim() + "',";
         }
 
         if(!StringUtils.emptyOrNull(config.getUrlService())){
-            sql += " URL_SERVICE = '" + config.getUrlService() + " ',";
+            sql += " URL_SERVICE = '" + config.getUrlService().trim() + "',";
         }
 
         if(!StringUtils.emptyOrNull(config.getIniTel())){
-            sql += " TEL_INI = " + config.getIniTel() + " ,";
+            sql += " TEL_INI = " + config.getIniTel().trim() + " ,";
         }
 
         if(!StringUtils.emptyOrNull(config.getFimTel())){
-            sql += " TEL_FIM = " + config.getFimTel() + " ,";
+            sql += " TEL_FIM = " + config.getFimTel().trim() + " ,";
         }
 
         if(!StringUtils.emptyOrNull(config.getContextService())){
-            sql += " CONTEXT_SERVICE = '" + config.getContextService() + " '";
+            sql += " CONTEXT_SERVICE = '" + config.getContextService().trim() + "'";
         }
 
         sql += " where id_config = 1";

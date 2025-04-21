@@ -88,10 +88,6 @@ public class ClienteService {
                 queryAlterarCliente += " OBSERVACAO = '"+cliente.getObservacao()+ "' , ";
             }
 
-            if(!StringUtils.emptyOrNull(cliente.getObservacao())){
-                queryAlterarCliente += " OBSERVACAO = '"+cliente.getObservacao()+ "' , ";
-            }
-
             queryAlterarCliente += " ID_ENDERECO = " + idEndereco + " WHERE TELEFONE = '" + cliente.getTelefone() + "'";
 
             Conectar.alterar(queryAlterarCliente);

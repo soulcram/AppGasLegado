@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ClienteEndereco {
-    private int idClienteEndereco;
+    private Integer idClienteEndereco;
     private String numero;
     private String apelido;
     private String complemento;
