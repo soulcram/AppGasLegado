@@ -2,7 +2,6 @@ package br.com.m3Tech.appGasLegado;
 
 import br.com.m3Tech.appGasLegado.dto.ClienteDto;
 import br.com.m3Tech.appGasLegado.service.ClienteService;
-import programagas.CadastrarNovoCliente;
 import programagas.Mascaras;
 import programagas.Metodos;
 import programagas.TelaCliente;
@@ -240,7 +239,7 @@ public class Vendas extends JFrame {
 
         ClienteDto cliente = new Service().getCliente(numeroTelefoneVerificado);
 
-        if(cliente != null){
+        if(cliente != null && cliente.getClienteEnderecos() != null && !cliente.getClienteEnderecos().isEmpty()){
             cliente.setViaApi(true);
             (new TelaPedidos(cliente)).setVisible(true);
             new ClienteService().salvarCliente(cliente);

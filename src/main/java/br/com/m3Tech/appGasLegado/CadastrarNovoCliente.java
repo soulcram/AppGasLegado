@@ -6,6 +6,7 @@ import br.com.m3Tech.appGasLegado.dto.ClienteDto;
 import br.com.m3Tech.appGasLegado.dto.ClienteEndereco;
 import br.com.m3Tech.appGasLegado.dto.Endereco;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import programagas.Mascaras;
 import programagas.Metodos;
 
@@ -465,8 +466,14 @@ public class CadastrarNovoCliente extends JFrame {
                 }
             }
 
+            Integer novoIdCliente = null;
+
+            if(!StringUtils.isBlank(idCliente)){
+                novoIdCliente = Integer.valueOf(idCliente);
+            }
+
             ClienteDto cliente = new ClienteDto();
-            cliente.setIdCliente(Integer.valueOf(idCliente));
+            cliente.setIdCliente(novoIdCliente);
             cliente.setTelefone(telefone);
             cliente.setViaApi(true);
             cliente.setNome(this.nomeTxt.getText());

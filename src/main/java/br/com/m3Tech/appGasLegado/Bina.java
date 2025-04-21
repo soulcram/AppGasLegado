@@ -6,7 +6,6 @@ import br.com.m3Tech.appGasLegado.service.ClienteService;
 import br.com.m3Tech.appGasLegado.service.ConfigService;
 import br.com.m3Tech.appGasLegado.utils.BinaUtils;
 import br.com.m3Tech.utils.StringUtils;
-import programagas.CadastrarNovoCliente;
 import programagas.Metodos;
 
 import java.awt.Color;
@@ -21,7 +20,6 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.TooManyListenersException;
@@ -436,7 +434,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
 
             ClienteDto cliente = service.getCliente(telefone);
 
-            if(cliente != null){
+            if(cliente != null && cliente.getClienteEnderecos() != null && !cliente.getClienteEnderecos().isEmpty()){
                 cliente.setViaApi(true);
                 (new TelaPedidos(cliente)).setVisible(true);
                 new ClienteService().salvarCliente(cliente);
