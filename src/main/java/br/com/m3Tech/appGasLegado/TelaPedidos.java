@@ -204,7 +204,7 @@ public class TelaPedidos extends JFrame {
             this.idTxt.setText(this.id_cliente);
             this.nomeTxt.setText(cliente.getNome());
             this.endTxt.setText( clienteEndereco.getEndereco().getLogradouro() + ", " + clienteEndereco.getNumero() + " - " + clienteEndereco.getEndereco().getBairro());
-            this.obsTxt.setText(clienteEndereco.getComplemento());
+            this.obsTxt.setText(cliente.getObservacao());
             this.pedidoObs.setText(cliente.getObservacao());
             this.nome = cliente.getNome();
             this.numCasa = clienteEndereco.getNumero();
