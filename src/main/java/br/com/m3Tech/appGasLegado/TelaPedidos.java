@@ -477,6 +477,7 @@ public class TelaPedidos extends JFrame {
             PedidoDto pedidoDto = new PedidoDto();
             pedidoDto.setTelefoneCliente(this.telefone);
             pedidoDto.setNomeCliente(this.nome);
+            pedidoDto.setCep(this.cep);
             pedidoDto.setLogradouro(this.logradouro);
             pedidoDto.setNumeroResidencia(this.numCasa);
             pedidoDto.setComplemento("Prox. " + this.referencia);

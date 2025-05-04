@@ -3,8 +3,6 @@ package br.com.m3Tech.appGasLegado;
 import br.com.m3Tech.appGasLegado.dto.ClienteDto;
 import br.com.m3Tech.appGasLegado.service.ClienteService;
 import programagas.Mascaras;
-import programagas.Metodos;
-import programagas.TelaCliente;
 import programagas.PintarTabela;
 
 import java.awt.Color;

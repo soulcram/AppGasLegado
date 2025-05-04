@@ -4,11 +4,13 @@ package br.com.m3Tech.appGasLegado;
 
 import br.com.m3Tech.appGasLegado.dto.ClienteDto;
 import br.com.m3Tech.appGasLegado.dto.ClienteEndereco;
+import br.com.m3Tech.appGasLegado.dto.ClienteLegadoDto;
 import br.com.m3Tech.appGasLegado.dto.Endereco;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import programagas.Mascaras;
 import programagas.Metodos;
+import programagas.ProgramaGas;
 
 import java.awt.AWTKeyStroke;
 import java.awt.Color;
@@ -131,19 +133,19 @@ public class CadastrarNovoCliente extends JFrame {
         String sql = "select * from Clientes  INNER JOIN ENDERECO ON ID_CEP = ID_ENDERECO where TELEFONE = '" + telefone + "'";
 
         try {
-            programagas.Conectar.pesquisar(sql);
-            if (programagas.Conectar.rs.next()) {
-                this.idClienteTxt.setText(programagas.Conectar.rs.getString("ID_CLIENTE"));
-                this.idCepTxt.setText(programagas.Conectar.rs.getString("ID_CEP"));
+            Conectar.pesquisar(sql);
+            if (Conectar.rs.next()) {
+                this.idClienteTxt.setText(Conectar.rs.getString("ID_CLIENTE"));
+                this.idCepTxt.setText(Conectar.rs.getString("ID_CEP"));
                 this.telefoneTxt.setText(telefone);
-                this.nomeTxt.setText(programagas.Conectar.rs.getString("NOME"));
-                this.obsTxt.setText(programagas.Conectar.rs.getString("OBSERVACAO"));
-                this.cepTxt.setText(programagas.Conectar.rs.getString("CEP"));
-                this.cidadeTxt.setText(programagas.Conectar.rs.getString("CIDADE"));
-                this.tp_LogradouroTxt.setSelectedItem(programagas.Conectar.rs.getString("TP_LOGRADOURO"));
-                this.logradouroTxt.setText(programagas.Conectar.rs.getString("LOGRADOURO"));
-                this.numeroTxt.setText(programagas.Conectar.rs.getString("NUMERO"));
-                this.bairroTxt.setText(programagas.Conectar.rs.getString("BAIRRO"));
+                this.nomeTxt.setText(Conectar.rs.getString("NOME"));
+                this.obsTxt.setText(Conectar.rs.getString("OBSERVACAO"));
+                this.cepTxt.setText(Conectar.rs.getString("CEP"));
+                this.cidadeTxt.setText(Conectar.rs.getString("CIDADE"));
+                this.tp_LogradouroTxt.setSelectedItem(Conectar.rs.getString("TP_LOGRADOURO"));
+                this.logradouroTxt.setText(Conectar.rs.getString("LOGRADOURO"));
+                this.numeroTxt.setText(Conectar.rs.getString("NUMERO"));
+                this.bairroTxt.setText(Conectar.rs.getString("BAIRRO"));
             } else {
                 this.idClienteTxt.setText("");
                 this.idCepTxt.setText("");
@@ -158,7 +160,7 @@ public class CadastrarNovoCliente extends JFrame {
                 this.bairroTxt.setText("");
             }
         } catch (SQLException var4) {
-            programagas.ProgramaGas.salvarErro(var4.getMessage() + "  Local:  " + var4.getLocalizedMessage());
+            ProgramaGas.salvarErro (var4.getMessage() + "  Local:  " + var4.getLocalizedMessage());
             this.systemError.setText(var4.toString());
         }
 
@@ -369,19 +371,19 @@ public class CadastrarNovoCliente extends JFrame {
             this.systemError.setText("Nenhum CEP digitado");
         } else {
             try {
-                programagas.Conectar.pesquisar(sql);
+                Conectar.pesquisar(sql);
 
-                while(programagas.Conectar.rs.next()) {
-                    this.bairroTxt.setText(programagas.Conectar.rs.getString("bairro"));
-                    this.logradouroTxt.setText(programagas.Conectar.rs.getString("logradouro"));
-                    this.tp_LogradouroTxt.setSelectedItem(programagas.Conectar.rs.getString("tp_logradouro"));
-                    this.idCepTxt.setText(programagas.Conectar.rs.getString("id_cep"));
-                    this.cidadeTxt.setText(programagas.Conectar.rs.getString("cidade"));
+                while(Conectar.rs.next()) {
+                    this.bairroTxt.setText(Conectar.rs.getString("bairro"));
+                    this.logradouroTxt.setText(Conectar.rs.getString("logradouro"));
+                    this.tp_LogradouroTxt.setSelectedItem(Conectar.rs.getString("tp_logradouro"));
+                    this.idCepTxt.setText(Conectar.rs.getString("id_cep"));
+                    this.cidadeTxt.setText(Conectar.rs.getString("cidade"));
                 }
 
                 this.numeroTxt.requestFocus();
             } catch (SQLException var5) {
-                programagas.ProgramaGas.salvarErro(var5.getMessage() + "  Local:  " + var5.getLocalizedMessage());
+                ProgramaGas.salvarErro(var5.getMessage() + "  Local:  " + var5.getLocalizedMessage());
                 this.systemError.setText(var5.toString());
             }
         }
@@ -400,19 +402,19 @@ public class CadastrarNovoCliente extends JFrame {
             sql = "INSERT INTO endereco (cidade,logradouro,bairro,cep,tp_logradouro) VALUES('" + cidade + "','" + logradouro + "','" + bairro + "','" + cep + "','" + tp_logradouro + "')";
 
             try {
-                programagas.Conectar.alterar(sql);
+                Conectar.alterar(sql);
                 this.msgTxt.setText("Cadastrado com sucesso");
             } catch (SQLException var11) {
-                programagas.ProgramaGas.salvarErro(var11.getMessage() + "  Local:  " + var11.getLocalizedMessage());
+                ProgramaGas.salvarErro(var11.getMessage() + "  Local:  " + var11.getLocalizedMessage());
             }
         } else {
             sql = "UPDATE ENDERECO SET CIDADE = '" + cidade + "' ,LOGRADOURO = '" + logradouro + "',BAIRRO = '" + bairro + "',CEP = '" + cep + "',TP_LOGRADOURO = '" + tp_logradouro + "'  where ID_CEP = " + id + "";
 
             try {
-                programagas.Conectar.alterar(sql);
+                Conectar.alterar(sql);
                 this.msgTxt.setText("Alterado com sucesso");
             } catch (SQLException var10) {
-                programagas.ProgramaGas.salvarErro(var10.getMessage() + "  Local:  " + var10.getLocalizedMessage());
+                ProgramaGas.salvarErro(var10.getMessage() + "  Local:  " + var10.getLocalizedMessage());
                 this.systemError.setText(var10.toString());
             }
         }
@@ -448,20 +450,20 @@ public class CadastrarNovoCliente extends JFrame {
                 sql = "INSERT INTO clientes (TELEFONE,NOME,ID_ENDERECO,NUMERO,OBSERVACAO) VALUES('" + telefone + "','" + nome + "'," + id_endereco + ",'" + numero + "','" + observacao + "')";
 
                 try {
-                    programagas.Conectar.alterar(sql);
+                    Conectar.alterar(sql);
                     this.msgTxt.setText("Cliente cadastrado com sucesso");
                 } catch (SQLException var13) {
-                    programagas.ProgramaGas.salvarErro(var13.getMessage() + "  Local:  " + var13.getLocalizedMessage());
+                    ProgramaGas.salvarErro(var13.getMessage() + "  Local:  " + var13.getLocalizedMessage());
                     this.systemError.setText(var13.toString());
                 }
             } else {
                 sql = "UPDATE CLIENTES SET TELEFONE = '" + telefone + "' ,NOME = '" + nome + "',ID_ENDERECO = " + id_endereco + ",NUMERO = '" + numero + "',OBSERVACAO = '" + observacao + "'  where ID_CLIENTE = " + idCliente + "";
 
                 try {
-                    programagas.Conectar.alterar(sql);
+                    Conectar.alterar(sql);
                     this.msgTxt.setText("Dados do Cliente alterado com sucesso");
                 } catch (SQLException var12) {
-                    programagas.ProgramaGas.salvarErro(var12.getMessage() + "  Local:  " + var12.getLocalizedMessage());
+                    ProgramaGas.salvarErro(var12.getMessage() + "  Local:  " + var12.getLocalizedMessage());
                     this.systemError.setText(var12.toString());
                 }
             }
@@ -471,6 +473,19 @@ public class CadastrarNovoCliente extends JFrame {
             if(!StringUtils.isBlank(idCliente)){
                 novoIdCliente = Integer.valueOf(idCliente);
             }
+
+            ClienteLegadoDto clienteLegadoDto = new ClienteLegadoDto();
+            clienteLegadoDto.setNomeCliente(this.nomeTxt.getText());
+            clienteLegadoDto.setCep(this.cepTxt.getText());
+            clienteLegadoDto.setLogradouro(this.logradouroTxt.getText());
+            clienteLegadoDto.setBairro(this.bairroTxt.getText());
+            clienteLegadoDto.setObservacao(observacao);
+            clienteLegadoDto.setComplemento(observacao);
+            clienteLegadoDto.setTelefoneCliente(telefone);
+            clienteLegadoDto.setNumeroResidencia(numero);
+
+            new Service().salvarCliente(clienteLegadoDto);
+
 
             ClienteDto cliente = new ClienteDto();
             cliente.setIdCliente(novoIdCliente);
@@ -510,14 +525,14 @@ public class CadastrarNovoCliente extends JFrame {
         model.setNumRows(0);
         if (!"".equals(lista)) {
             try {
-                programagas.Conectar.pesquisar(sql);
+                Conectar.pesquisar(sql);
 
-                while(programagas.Conectar.rs.next()) {
-                    String[] conteudo = new String[]{programagas.Conectar.rs.getString("ID_CEP"), programagas.Conectar.rs.getString("CEP"), programagas.Conectar.rs.getString("LOGRADOURO"), programagas.Conectar.rs.getString("BAIRRO")};
+                while(Conectar.rs.next()) {
+                    String[] conteudo = new String[]{Conectar.rs.getString("ID_CEP"), Conectar.rs.getString("CEP"), Conectar.rs.getString("LOGRADOURO"), Conectar.rs.getString("BAIRRO")};
                     model.addRow(conteudo);
                 }
             } catch (SQLException var6) {
-                programagas.ProgramaGas.salvarErro(var6.getMessage() + "  Local:  " + var6.getLocalizedMessage());
+                ProgramaGas.salvarErro(var6.getMessage() + "  Local:  " + var6.getLocalizedMessage());
                 this.systemError.setText(var6.toString());
             }
         }
@@ -530,18 +545,18 @@ public class CadastrarNovoCliente extends JFrame {
             String sql = "select * from endereco where ID_CEP = " + id + "";
 
             try {
-                programagas.Conectar.pesquisar(sql);
+                Conectar.pesquisar(sql);
 
-                while(programagas.Conectar.rs.next()) {
-                    this.bairroTxt.setText(programagas.Conectar.rs.getString("bairro"));
-                    this.logradouroTxt.setText(programagas.Conectar.rs.getString("logradouro"));
-                    this.tp_LogradouroTxt.setSelectedItem(programagas.Conectar.rs.getString("tp_logradouro"));
-                    this.idCepTxt.setText(programagas.Conectar.rs.getString("id_cep"));
-                    this.cidadeTxt.setText(programagas.Conectar.rs.getString("cidade"));
-                    this.cepTxt.setText(programagas.Conectar.rs.getString("CEP"));
+                while(Conectar.rs.next()) {
+                    this.bairroTxt.setText(Conectar.rs.getString("bairro"));
+                    this.logradouroTxt.setText(Conectar.rs.getString("logradouro"));
+                    this.tp_LogradouroTxt.setSelectedItem(Conectar.rs.getString("tp_logradouro"));
+                    this.idCepTxt.setText(Conectar.rs.getString("id_cep"));
+                    this.cidadeTxt.setText(Conectar.rs.getString("cidade"));
+                    this.cepTxt.setText(Conectar.rs.getString("CEP"));
                 }
             } catch (SQLException var5) {
-                programagas.ProgramaGas.salvarErro(var5.getMessage() + "  Local:  " + var5.getLocalizedMessage());
+                ProgramaGas.salvarErro(var5.getMessage() + "  Local:  " + var5.getLocalizedMessage());
                 this.systemError.setText(var5.toString());
             }
 
@@ -564,10 +579,10 @@ public class CadastrarNovoCliente extends JFrame {
         model.setNumRows(0);
         if (!"".equals(lista)) {
             try {
-                programagas.Conectar.pesquisar(sql);
+                Conectar.pesquisar(sql);
 
-                while(programagas.Conectar.rs.next()) {
-                    String[] conteudo = new String[]{programagas.Conectar.rs.getString("ID_CEP"), programagas.Conectar.rs.getString("CEP"), programagas.Conectar.rs.getString("LOGRADOURO"), Conectar.rs.getString("BAIRRO")};
+                while(Conectar.rs.next()) {
+                    String[] conteudo = new String[]{Conectar.rs.getString("ID_CEP"), Conectar.rs.getString("CEP"), Conectar.rs.getString("LOGRADOURO"), Conectar.rs.getString("BAIRRO")};
                     model.addRow(conteudo);
                 }
             } catch (SQLException var6) {

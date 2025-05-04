@@ -1,6 +1,7 @@
 package br.com.m3Tech.appGasLegado;
 
 import br.com.m3Tech.appGasLegado.dto.ClienteDto;
+import br.com.m3Tech.appGasLegado.dto.ClienteLegadoDto;
 import br.com.m3Tech.appGasLegado.dto.PedidoDto;
 import br.com.m3Tech.appGasLegado.entity.Config;
 import br.com.m3Tech.appGasLegado.service.ConfigService;
@@ -61,6 +62,26 @@ public class Service {
                     .pathValue(config.getContextService().trim())
                     .pathValue("pedido")
                     .bodyFromObject(pedido)
+                    .addHeader("Authorization", new AutorizationUtil().getAutorization())
+                    .addAcceptJson()
+                    .addContentTypeJson()
+                    .build()
+                    .enviar();
+
+            System.out.println(responseEntity.getStatusCode());
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void salvarCliente(ClienteLegadoDto clienteLegadoDto){
+        try {
+            Config config = new ConfigService().getConfig();
+
+            ResponseEntity<String> responseEntity = new RequestApiClient(new RestTemplate(), HttpMethod.PUT, config.getUrlService().trim())
+                    .pathValue(config.getContextService().trim())
+                    .pathValue("cliente")
+                    .bodyFromObject(clienteLegadoDto)
                     .addHeader("Authorization", new AutorizationUtil().getAutorization())
                     .addAcceptJson()
                     .addContentTypeJson()
