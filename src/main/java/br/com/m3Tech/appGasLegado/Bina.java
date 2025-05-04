@@ -83,6 +83,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
             if (Conectar.rs.next()) {
                 this.cbPortas.setSelectedItem(Conectar.rs.getString("PORTA"));
             }
+            Conectar.rs.close();
         } catch (SQLException var3) {
             salvarErro(var3.getMessage());
             this.systemError.setText(var3.toString());
@@ -451,6 +452,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
                     cnc.setVisible(true);
                     cnc.telefoneTxt.setText(telefone);
                 }
+                Conectar.rs.close();
             }
         } catch (SQLException var8) {
             salvarErro(var8.getMessage());

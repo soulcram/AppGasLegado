@@ -22,7 +22,7 @@ public class ClienteService {
             }else{
                 salvarNovoCliente(cliente);
             }
-
+            Conectar.rs.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -19,6 +19,7 @@ public class AtualizarBanco {
         novaColunaNomeLojaTbConfig();
         novaColunaContextServiceTbConfig();
         novaColunaUrlServiceTbConfig();
+        novaColunaValorPedidos();
     }
 
     private static void novaColunaTelIniTbConfig() {
@@ -105,6 +106,24 @@ public class AtualizarBanco {
             if(!rs.next()) {
                 System.out.println("Adicionando nova coluna URL_SERVICE na tb CONFIG");
                 Conectar.alterar("ALTER TABLE CONFIG ADD COLUMN URL_SERVICE VARCHAR(100)");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void novaColunaValorPedidos() {
+        try {
+            String sqlValida = "SELECT 1 \n" +
+                    "FROM SYS.SYSCOLUMNS c\n" +
+                    "JOIN SYS.SYSTABLES t ON c.REFERENCEID = t.TABLEID\n" +
+                    "WHERE t.TABLENAME = 'PEDIDOS' AND c.COLUMNNAME = 'VALOR'";
+            ResultSet rs = Conectar.pesquisar(sqlValida);
+
+            assert rs != null;
+            if(!rs.next()) {
+                System.out.println("Adicionando nova coluna VALOR na tb PEDIDOS");
+                Conectar.alterar("ALTER TABLE PEDIDOS ADD COLUMN VALOR DECIMAL(10,2)");
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());

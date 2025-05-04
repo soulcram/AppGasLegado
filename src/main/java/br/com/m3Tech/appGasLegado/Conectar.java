@@ -7,9 +7,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import lombok.extern.slf4j.Slf4j;
 import org.apache.derby.impl.drda.NetworkServerControlImpl;
 import programagas.ProgramaGas;
 
+@Slf4j
 public class Conectar {
     public static ResultSet rs;
     private static final String url = "jdbc:derby:C:\\BancoDeDados\\ProgramaGas";
@@ -26,8 +29,8 @@ public class Conectar {
             Statement stm = con.createStatement();
             rs = stm.executeQuery(sql);
             return rs;
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException var3) {
-            ProgramaGas.salvarErro(var3.getMessage() + "  Local:  " + var3.getLocalizedMessage());
+        } catch (Exception var3) {
+            log.error(var3.getMessage() + "  Local:  " + var3.getLocalizedMessage());
         }
         return null;
     }
@@ -39,7 +42,7 @@ public class Conectar {
             Statement stm = con.createStatement();
             stm.executeUpdate(sql);
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException var3) {
-            ProgramaGas.salvarErro(var3.getMessage() + "  Local:  " + var3.getLocalizedMessage());
+            log.error(var3.getMessage() + "  Local:  " + var3.getLocalizedMessage());
         }
 
     }

@@ -1,9 +1,6 @@
 package br.com.m3Tech.appGasLegado;
 
-import br.com.m3Tech.appGasLegado.dto.ClienteDto;
-import br.com.m3Tech.appGasLegado.dto.ClienteEndereco;
-import br.com.m3Tech.appGasLegado.dto.PedidoDto;
-import br.com.m3Tech.appGasLegado.dto.PedidoProdutoDto;
+import br.com.m3Tech.appGasLegado.dto.*;
 import br.com.m3Tech.appGasLegado.entity.Config;
 import br.com.m3Tech.appGasLegado.service.ConfigService;
 import org.apache.commons.lang3.BooleanUtils;
@@ -53,6 +50,9 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
+
+import static br.com.m3Tech.appGasLegado.utils.ImpressoraUtils.SemAcento;
+import static br.com.m3Tech.appGasLegado.utils.ImpressoraUtils.gerarNotaTermica;
 
 public class TelaPedidos extends JFrame {
     String id_cliente;
@@ -106,6 +106,7 @@ public class TelaPedidos extends JFrame {
             while(Conectar.rs.next()) {
                 this.produtosCol.addItem(Conectar.rs.getString("NOME"));
             }
+            Conectar.rs.close();
         } catch (SQLException var10) {
             ProgramaGas.salvarErro(var10.getMessage() + "  Local:  " + var10.getLocalizedMessage());
             this.systemError.setText(var10.toString());
@@ -135,35 +136,6 @@ public class TelaPedidos extends JFrame {
         this.boxImpressoras.setSelectedItem(ProgramaGas.Impressora);
     }
 
-    private String gerarNotaTermica() {
-        Date date = new Date();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        DateFormat dateFormatHora = new SimpleDateFormat("HH:mm");
-        String hoje = dateFormat.format(date);
-        String hora = dateFormatHora.format(date);
-        String nota = "";
-        nota = nota + "\u001bE       CONSIGAZ\u001bF" + System.getProperty("line.separator");
-        nota = nota + "--------------------------------" + System.getProperty("line.separator");
-        nota = nota + hoje + "    " + hora + System.getProperty("line.separator");
-        nota = nota + "                                " + System.getProperty("line.separator");
-        nota = nota + this.telefoneTxt.getText() + System.getProperty("line.separator");
-        nota = nota + "                                " + System.getProperty("line.separator");
-        nota = nota + this.nome + System.getProperty("line.separator");
-        nota = nota + "                                " + System.getProperty("line.separator");
-        nota = nota + this.tp_logradouro + ": " + this.logradouro + ", " + this.numCasa + System.getProperty("line.separator");
-        nota = nota + "                                " + System.getProperty("line.separator");
-        nota = nota + this.bairro + System.getProperty("line.separator");
-        nota = nota + "                                " + System.getProperty("line.separator");
-        nota = nota + this.obs + System.getProperty("line.separator");
-        nota = nota + "                                " + System.getProperty("line.separator");
-        nota = nota + this.montarPedido() + System.getProperty("line.separator");
-        nota = nota + "                                " + System.getProperty("line.separator");
-        nota = nota + "Total: " + this.txtTotal.getText() + System.getProperty("line.separator");
-        nota = nota + "                                " + System.getProperty("line.separator");
-        nota = nota + this.formaPagamento.getSelectedItem().toString() + System.getProperty("line.separator") + "--------------------------------" + System.getProperty("line.separator");
-        return nota;
-    }
-
     private void preencher(ClienteDto cliente) {
 
         if(BooleanUtils.toBooleanDefaultIfNull(cliente.getViaApi(),false)){
@@ -181,6 +153,7 @@ public class TelaPedidos extends JFrame {
                 while (Conectar.rs.next()) {
                     this.id_cliente = Conectar.rs.getString("ID_CLIENTE");
                 }
+                Conectar.rs.close();
             } catch (SQLException var9) {
                 ProgramaGas.salvarErro(var9.getMessage() + "  Local:  " + var9.getLocalizedMessage());
                 this.systemError.setText(var9.toString());
@@ -196,6 +169,7 @@ public class TelaPedidos extends JFrame {
                     String[] conteudo = new String[]{Conectar.rs.getString("PEDIDO"), Conectar.rs.getString("formadepagamento"), Conectar.rs.getString("ENTREGADOR"), Conectar.rs.getString("STATUS"), Conectar.rs.getString("DIA")};
                     model.addRow(conteudo);
                 }
+                Conectar.rs.close();
             } catch (SQLException var7) {
                 ProgramaGas.salvarErro(var7.getMessage() + "  Local:  " + var7.getLocalizedMessage());
                 this.systemError.setText(var7.toString());
@@ -231,6 +205,7 @@ public class TelaPedidos extends JFrame {
                     this.numCasa = Conectar.rs.getString("NUMERO");
                     this.obs = Conectar.rs.getString("OBSERVACAO");
                 }
+                Conectar.rs.close();
             } catch (SQLException var9) {
                 ProgramaGas.salvarErro(var9.getMessage() + "  Local:  " + var9.getLocalizedMessage());
                 this.systemError.setText(var9.toString());
@@ -249,6 +224,7 @@ public class TelaPedidos extends JFrame {
                     this.tp_logradouro = Conectar.rs.getString("TP_LOGRADOURO");
                     this.referencia = Conectar.rs.getString("REFERENCIA");
                 }
+                Conectar.rs.close();
             } catch (SQLException var8) {
                 ProgramaGas.salvarErro(var8.getMessage() + "  Local:  " + var8.getLocalizedMessage());
                 this.systemError.setText(var8.toString());
@@ -264,6 +240,7 @@ public class TelaPedidos extends JFrame {
                     String[] conteudo = new String[]{Conectar.rs.getString("PEDIDO"), Conectar.rs.getString("formadepagamento"), Conectar.rs.getString("ENTREGADOR"), Conectar.rs.getString("STATUS"), Conectar.rs.getString("DIA")};
                     model.addRow(conteudo);
                 }
+                Conectar.rs.close();
             } catch (SQLException var7) {
                 ProgramaGas.salvarErro(var7.getMessage() + "  Local:  " + var7.getLocalizedMessage());
                 this.systemError.setText(var7.toString());
@@ -346,7 +323,7 @@ public class TelaPedidos extends JFrame {
         this.jLabel1.setText("Forma de Pagamento");
         this.formaPagamento.setEditable(true);
         this.formaPagamento.setFont(new Font("Tahoma", 1, 12));
-        this.formaPagamento.setModel(new DefaultComboBoxModel(new String[]{"Troco não", "Visa", "Mastercard", "Troco 50,00", "Troco 60,00", "Troco100,00", "Troco 70,00", "Troco 10,00", "Troco 20,00", "Elo", "Mais", "Hipercard", "Outros", "Troco 9,00", "Troco 15,00"}));
+        this.formaPagamento.setModel(new DefaultComboBoxModel(new String[]{"Troco não","QR CODE", "Visa", "Mastercard","Troco 100,00", "Troco 200,00", "Troco 50,00", "Troco 60,00", "Troco100,00", "Troco 70,00", "Troco 10,00", "Troco 20,00", "Elo", "Mais", "Hipercard", "Outros", "Troco 9,00", "Troco 15,00"}));
         this.jTable2.setModel(new DefaultTableModel(new Object[0][], new String[]{"Produto", "Quantidade", "Valor Unidade"}) {
             Class[] types = new Class[]{String.class, String.class, String.class};
 
@@ -424,7 +401,7 @@ public class TelaPedidos extends JFrame {
             Date date = new Date();
             DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
             String hoje = dateFormat.format(date);
-            String sql = "INSERT INTO PEDIDOS (DIA,ID_CLIENTEp,STATUS,  PEDIDO, OBSERVACAO,entregador,formadepagamento) VALUES ('" + hoje + "'," + this.id_cliente + ", 'Aberto', '" + pedido + "', '" + this.obsPedido + "','Funcionário','" + fDp + "')";
+            String sql = "INSERT INTO PEDIDOS (DIA,ID_CLIENTEp,STATUS,  PEDIDO, OBSERVACAO,entregador,formadepagamento,VALOR) VALUES ('" + hoje + "'," + this.id_cliente + ", 'Aberto', '" + pedido + "', '" + this.obsPedido + "','Funcionário','" + fDp + "', " + this.txtTotal.getText() + ")";
 
             try {
                 Conectar.alterar(sql);
@@ -449,6 +426,7 @@ public class TelaPedidos extends JFrame {
                 if (Conectar.rs.next()) {
                     this.id_pedido = Conectar.rs.getString("id_pedido");
                 }
+                Conectar.rs.close();
             } catch (SQLException var19) {
                 ProgramaGas.salvarErro(var19.getMessage() + "  Local:  " + var19.getLocalizedMessage());
                 this.systemError.setText(var19.toString());
@@ -458,19 +436,30 @@ public class TelaPedidos extends JFrame {
             this.dispose();
             Vendas.pedidosAberto();
 
-            for(int i = 0; i < 1; ++i) {
-                InputStream stream = new ByteArrayInputStream((SemAcento(this.gerarNotaTermica()) + '\u001b' + 'w').getBytes());
-                PrintService impressora = this.ps[this.boxImpressoras.getSelectedIndex()];
-                DocPrintJob dpj = impressora.createPrintJob();
-                DocFlavor flavor = INPUT_STREAM.AUTOSENSE;
-                Doc documentoTexto = new SimpleDoc(stream, flavor, (DocAttributeSet)null);
+            DadosImpressaoDto dadosImpressaoDto = new DadosImpressaoDto();
+            dadosImpressaoDto.setTelefone(telefone);
+            dadosImpressaoDto.setNome(nome);
+            dadosImpressaoDto.setLogradouro(logradouro);
+            dadosImpressaoDto.setBairro(bairro);
+            dadosImpressaoDto.setPedido(montarPedido());
+            dadosImpressaoDto.setObs(obsPedido);
+            dadosImpressaoDto.setFormaPagamento(this.formaPagamento.getSelectedItem().toString());
+            dadosImpressaoDto.setTotal(this.txtTotal.getText());
+            dadosImpressaoDto.setNumCasa(numCasa);
+            dadosImpressaoDto.setTp_logradouro(tp_logradouro);
 
-                try {
-                    dpj.print(documentoTexto, (PrintRequestAttributeSet)null);
-                } catch (PrintException var18) {
-                    ProgramaGas.salvarErro(var18.getMessage() + "  Local:  " + var18.getLocalizedMessage());
-                }
+            InputStream stream = new ByteArrayInputStream((SemAcento(gerarNotaTermica(dadosImpressaoDto)) + '\u001b' + 'w').getBytes());
+            PrintService impressora = this.ps[this.boxImpressoras.getSelectedIndex()];
+            DocPrintJob dpj = impressora.createPrintJob();
+            DocFlavor flavor = INPUT_STREAM.AUTOSENSE;
+            Doc documentoTexto = new SimpleDoc(stream, flavor, (DocAttributeSet)null);
+
+            try {
+                dpj.print(documentoTexto, (PrintRequestAttributeSet)null);
+            } catch (PrintException var18) {
+                ProgramaGas.salvarErro(var18.getMessage() + "  Local:  " + var18.getLocalizedMessage());
             }
+
 
             Config config = new ConfigService().getConfig();
 
@@ -494,12 +483,6 @@ public class TelaPedidos extends JFrame {
 
     }
 
-    public static String SemAcento(String str) {
-        String nfdNormalizedString = Normalizer.normalize(str, Form.NFD);
-        Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-        return pattern.matcher(nfdNormalizedString).replaceAll("");
-    }
-
     private void jButton1ActionPerformed(ActionEvent evt) {
         DefaultTableModel model = (DefaultTableModel)this.jTable2.getModel();
         String[] linha = new String[]{"", "1"};
@@ -521,6 +504,7 @@ public class TelaPedidos extends JFrame {
                 if (Conectar.rs.next()) {
                     this.jTable2.setValueAt(Conectar.rs.getString("Valor"), i, 2);
                 }
+                Conectar.rs.close();
             } catch (SQLException var9) {
                 ProgramaGas.salvarErro(var9.getMessage() + "  Local:  " + var9.getLocalizedMessage());
             }

@@ -1,6 +1,7 @@
 package br.com.m3Tech.appGasLegado;
 
 import br.com.m3Tech.appGasLegado.dto.ClienteDto;
+import br.com.m3Tech.appGasLegado.dto.OpcoesDto;
 import br.com.m3Tech.appGasLegado.service.ClienteService;
 import programagas.Mascaras;
 import programagas.PintarTabela;
@@ -74,6 +75,7 @@ public class Vendas extends JFrame {
             while(Conectar.rs.next()) {
                 this.entregadorCol.addItem(Conectar.rs.getString("NOME"));
             }
+            Conectar.rs.close();
         } catch (SQLException var4) {
             ProgramaGas.salvarErro(var4.getMessage() + "  Local:  " + var4.getLocalizedMessage());
             systemError.setText(var4.toString());
@@ -143,7 +145,7 @@ public class Vendas extends JFrame {
                 entregadorColItemStateChanged(evt);
             }
         });
-        this.formPag.setModel(new DefaultComboBoxModel(new String[]{"Troco não", "Visa", "Mastercard", "Troco 60,00", "Troco100,00", "Troco 70,00", "Troco 50,00", "Troco 10,00", "Troco 20,00", "Elo", "Mais", "Hipercard", "Outros", "Troco 9,00", "Troco 15,00"}));
+        this.formPag.setModel(new DefaultComboBoxModel(new String[]{"Troco não","QR CODE", "Visa", "Mastercard", "Troco 60,00","Troco 200,00", "Troco100,00", "Troco 70,00", "Troco 50,00", "Troco 10,00", "Troco 20,00", "Elo", "Mais", "Hipercard", "Outros", "Troco 9,00", "Troco 15,00"}));
         this.setDefaultCloseOperation(3);
         this.setTitle("Consigaz");
         this.setSize(new Dimension(1000, 1000));
@@ -175,7 +177,7 @@ public class Vendas extends JFrame {
             tabela1.getColumnModel().getColumn(5).setMaxWidth(150);
             tabela1.getColumnModel().getColumn(6).setMaxWidth(100);
             tabela1.getColumnModel().getColumn(7).setMaxWidth(100);
-            tabela1.getColumnModel().getColumn(8).setMaxWidth(1);
+            tabela1.getColumnModel().getColumn(8).setMaxWidth(10);
         }
 
         this.entradaTelTxt.addFocusListener(new FocusAdapter() {
@@ -256,6 +258,7 @@ public class Vendas extends JFrame {
                     cnc.setVisible(true);
                     cnc.telefoneTxt.setText(numeroTelefoneVerificado);
                 }
+                Conectar.rs.close();
             } catch (SQLException var5) {
                 ProgramaGas.salvarErro(var5.getMessage() + "  Local:  " + var5.getLocalizedMessage());
                 systemError.setText(var5.toString());
@@ -286,7 +289,11 @@ public class Vendas extends JFrame {
     private void tabela1MouseClicked(MouseEvent evt) {
         salvar();
         if (evt.getClickCount() == 2) {
-            (new TelaCliente(tabela1.getValueAt(tabela1.getSelectedRow(), 2).toString())).setVisible(true);
+            OpcoesDto opcoesDto = new OpcoesDto();
+            opcoesDto.setIdPedido(Integer.valueOf(tabela1.getValueAt(tabela1.getSelectedRow(), 8).toString()));
+            opcoesDto.setTelefone(tabela1.getValueAt(tabela1.getSelectedRow(), 2).toString());
+
+            (new TelaOpcoes(opcoesDto)).setVisible(true);
         }
 
     }
@@ -314,6 +321,7 @@ public class Vendas extends JFrame {
                 String[] conteudo = new String[]{Conectar.rs.getString("pedido"), Conectar.rs.getString("nome"), Conectar.rs.getString("telefone"), endereco, Conectar.rs.getString("formadepagamento"), entregador, Conectar.rs.getString("Status"), "", Conectar.rs.getString("id_pedido")};
                 model.addRow(conteudo);
             }
+            Conectar.rs.close();
         } catch (SQLException var10) {
             ProgramaGas.salvarErro(var10.getMessage() + "  Local:  " + var10.getLocalizedMessage());
             systemError.setText(var10.toString());

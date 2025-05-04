@@ -179,25 +179,25 @@ public class TelaCliente extends JFrame {
     }
 
     private void nomeTxtKeyPressed(KeyEvent evt) {
-        String nome = this.nomeTxt.getText();
-        String sql = "select * from Clientes  INNER JOIN ENDERECO ON ID_CEP = ID_ENDERECO where UPPER(NOME) LIKE '%" + nome.toUpperCase() + "%'";
-        DefaultTableModel model = (DefaultTableModel)this.jTable1.getModel();
-        model.setNumRows(0);
-        if (!"".equals(nome)) {
-            try {
-                Conectar.pesquisar(sql);
-
-                while(Conectar.rs.next()) {
-                    String[] conteudo = new String[]{Conectar.rs.getString("ID_CLIENTE"), Conectar.rs.getString("TELEFONE"), Conectar.rs.getString("NOME"), Conectar.rs.getString("LOGradouro"), Conectar.rs.getString("NUMERO")};
-                    model.addRow(conteudo);
-                }
-            } catch (SQLException var6) {
-                salvarErro(var6.getMessage() + "  Local:  " + var6.getLocalizedMessage());
-                this.systemError.setText(var6.toString());
-            }
-        }
-
-        this.msgTabela.setText("Resultado da pesquisa pelo nome do cliente.");
+//        String nome = this.nomeTxt.getText();
+//        String sql = "select * from Clientes  INNER JOIN ENDERECO ON ID_CEP = ID_ENDERECO where UPPER(NOME) LIKE '%" + nome.toUpperCase() + "%'";
+//        DefaultTableModel model = (DefaultTableModel)this.jTable1.getModel();
+//        model.setNumRows(0);
+//        if (!"".equals(nome)) {
+//            try {
+//                Conectar.pesquisar(sql);
+//
+//                while(Conectar.rs.next()) {
+//                    String[] conteudo = new String[]{Conectar.rs.getString("ID_CLIENTE"), Conectar.rs.getString("TELEFONE"), Conectar.rs.getString("NOME"), Conectar.rs.getString("LOGradouro"), Conectar.rs.getString("NUMERO")};
+//                    model.addRow(conteudo);
+//                }
+//            } catch (SQLException var6) {
+//                salvarErro(var6.getMessage() + "  Local:  " + var6.getLocalizedMessage());
+//                this.systemError.setText(var6.toString());
+//            }
+//        }
+//
+//        this.msgTabela.setText("Resultado da pesquisa pelo nome do cliente.");
     }
 
     private void endTxtKeyPressed(KeyEvent evt) {
@@ -213,6 +213,7 @@ public class TelaCliente extends JFrame {
                     String[] conteudo = new String[]{Conectar.rs.getString("ID_CEP"), Conectar.rs.getString("CEP"), Conectar.rs.getString("LOGRADOURO"), Conectar.rs.getString("BAIRRO"), Conectar.rs.getString("REFERENCIA")};
                     model.addRow(conteudo);
                 }
+                Conectar.rs.close();
             } catch (SQLException var6) {
                 salvarErro(var6.getMessage() + "  Local:  " + var6.getLocalizedMessage());
                 this.systemError.setText(var6.toString());
@@ -240,6 +241,7 @@ public class TelaCliente extends JFrame {
                         model.addRow(conteudo);
                         this.msgTabela.setText("Resultado da pesquisa pelo nome do cliente.");
                     }
+                    Conectar.rs.close();
                 } catch (SQLException var6) {
                     salvarErro(var6.getMessage() + "  Local:  " + var6.getLocalizedMessage());
                     this.systemError.setText(var6.toString());
@@ -323,6 +325,7 @@ public class TelaCliente extends JFrame {
                 numCasa = Conectar.rs.getString("NUMERO");
                 obs = Conectar.rs.getString("OBSERVACAO");
             }
+            Conectar.rs.close();
         } catch (SQLException var19) {
             salvarErro(var19.getMessage() + "  Local:  " + var19.getLocalizedMessage());
             this.systemError.setText(var19.toString());
@@ -339,6 +342,7 @@ public class TelaCliente extends JFrame {
                 tp_logradouro = Conectar.rs.getString("TP_LOGRADOURO");
                 referencia = Conectar.rs.getString("REFERENCIA");
             }
+            Conectar.rs.close();
         } catch (SQLException var18) {
             salvarErro(var18.getMessage() + "  Local:  " + var18.getLocalizedMessage());
             this.systemError.setText(var18.toString());
@@ -353,6 +357,7 @@ public class TelaCliente extends JFrame {
                 String[] conteudo = new String[]{Integer.toString(i), Conectar.rs.getString("Pedido"), Conectar.rs.getString("ENTREGADOR"), Conectar.rs.getString("FORMADEPAGAMENTO"), Conectar.rs.getString("STATUS"), Conectar.rs.getString("DIA")};
                 model.addRow(conteudo);
             }
+            Conectar.rs.close();
         } catch (SQLException var17) {
             salvarErro(var17.getMessage() + "  Local:  " + var17.getLocalizedMessage());
             this.systemError.setText(var17.toString());

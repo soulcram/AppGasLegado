@@ -16,11 +16,13 @@ public class Testando {
         String exibirColunas = "SELECT c.COLUMNNAME, c.COLUMNNUMBER, c.COLUMNDATATYPE \n" +
                 "FROM SYS.SYSCOLUMNS c\n" +
                 "JOIN SYS.SYSTABLES t ON c.REFERENCEID = t.TABLEID\n" +
-                "WHERE t.TABLENAME = 'CLIENTES'";
+                "WHERE t.TABLENAME = 'PEDIDOS'";
 
         String configs = "SELECT ID_CONFIG, DATA, IMPRESSORA, NOMEPC, PORTA, TEL_INI, TEL_FIM FROM CONFIG order by ID_CONFIG FETCH FIRST 1 ROWS ONLY";
 
         String inserindoColuna = "ALTER TABLE CONFIG ADD COLUMN TEL_INI INT";
+
+        String sqlPedido = "select  * from pedidos as p INNER JOIN CLIENTES as c ON ID_CLIENTE = ID_CLIENTEp INNER JOIN ENDERECO ON ID_CEP = ID_ENDERECO where ID_PEDIDO = " + 234173;
 
 //        Conectar.alterar(inserindoColuna);
 
@@ -37,6 +39,8 @@ public class Testando {
            System.out.println(rs.getString("COLUMNDATATYPE"));
 //           System.out.println(rs.getString("TEL_INI"));
 //           System.out.println(rs.getString("TEL_FIM"));
+
+//           System.out.println(rs.getString("REFERENCIA"));
            System.out.println();
        }
     }

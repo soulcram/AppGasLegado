@@ -159,6 +159,7 @@ public class CadastrarNovoCliente extends JFrame {
                 this.numeroTxt.setText("");
                 this.bairroTxt.setText("");
             }
+            Conectar.rs.close();
         } catch (SQLException var4) {
             ProgramaGas.salvarErro (var4.getMessage() + "  Local:  " + var4.getLocalizedMessage());
             this.systemError.setText(var4.toString());
@@ -380,7 +381,7 @@ public class CadastrarNovoCliente extends JFrame {
                     this.idCepTxt.setText(Conectar.rs.getString("id_cep"));
                     this.cidadeTxt.setText(Conectar.rs.getString("cidade"));
                 }
-
+                Conectar.rs.close();
                 this.numeroTxt.requestFocus();
             } catch (SQLException var5) {
                 ProgramaGas.salvarErro(var5.getMessage() + "  Local:  " + var5.getLocalizedMessage());
@@ -531,6 +532,7 @@ public class CadastrarNovoCliente extends JFrame {
                     String[] conteudo = new String[]{Conectar.rs.getString("ID_CEP"), Conectar.rs.getString("CEP"), Conectar.rs.getString("LOGRADOURO"), Conectar.rs.getString("BAIRRO")};
                     model.addRow(conteudo);
                 }
+                Conectar.rs.close();
             } catch (SQLException var6) {
                 ProgramaGas.salvarErro(var6.getMessage() + "  Local:  " + var6.getLocalizedMessage());
                 this.systemError.setText(var6.toString());
@@ -555,6 +557,7 @@ public class CadastrarNovoCliente extends JFrame {
                     this.cidadeTxt.setText(Conectar.rs.getString("cidade"));
                     this.cepTxt.setText(Conectar.rs.getString("CEP"));
                 }
+                Conectar.rs.close();
             } catch (SQLException var5) {
                 ProgramaGas.salvarErro(var5.getMessage() + "  Local:  " + var5.getLocalizedMessage());
                 this.systemError.setText(var5.toString());
@@ -585,6 +588,7 @@ public class CadastrarNovoCliente extends JFrame {
                     String[] conteudo = new String[]{Conectar.rs.getString("ID_CEP"), Conectar.rs.getString("CEP"), Conectar.rs.getString("LOGRADOURO"), Conectar.rs.getString("BAIRRO")};
                     model.addRow(conteudo);
                 }
+                Conectar.rs.close();
             } catch (SQLException var6) {
                 ProgramaGas.salvarErro(var6.getMessage() + "  Local:  " + var6.getLocalizedMessage());
                 this.systemError.setText(var6.toString());
