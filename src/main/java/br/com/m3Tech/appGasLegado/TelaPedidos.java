@@ -21,18 +21,7 @@ import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.DocFlavor.SERVICE_FORMATTED;
 import javax.print.attribute.AttributeSet;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultCellEditor;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.GroupLayout;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.Border;
@@ -80,8 +69,11 @@ public class TelaPedidos extends JFrame {
     private JLabel telefoneTxt;
     private JTextField txtTotal;
 
+    private JCheckBox imprimirCheckBox;
+
     public TelaPedidos(ClienteDto cliente) {
         this.initComponents();
+        imprimirCheckBox.setSelected(true);
         this.telefone = cliente.getTelefone();
         String loadProdutos = "Select * from PRODUTOS";
 
@@ -276,6 +268,10 @@ public class TelaPedidos extends JFrame {
         this.nomeTxt.setText("Nome");
         this.endTxt.setFont(new Font("Tahoma", 1, 14));
         this.endTxt.setText("Endereço");
+
+        this.imprimirCheckBox = new JCheckBox("Deve Imprimir?");
+        this.imprimirCheckBox.setBounds(795,80,190,30);
+
         this.jScrollPane1.setBorder(BorderFactory.createTitledBorder("Ultimos Pedidos"));
         this.jTable1.setModel(new DefaultTableModel(new Object[0][], new String[]{"Pedido", "Forma de Pagamento", "Entregador", "Status", "Data"}) {
             Class[] types = new Class[]{String.class, String.class, String.class, String.class, String.class};
@@ -364,6 +360,8 @@ public class TelaPedidos extends JFrame {
         this.getContentPane().setLayout(layout);
         layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(this.jPanel1, Alignment.TRAILING, -1, -1, 32767));
         layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(this.jPanel1, Alignment.TRAILING, -1, -1, 32767));
+
+        this.jPanel1.add(imprimirCheckBox);
         this.pack();
     }
 
@@ -445,20 +443,21 @@ public class TelaPedidos extends JFrame {
 
             }
 
-            DadosImpressaoDto dadosImpressaoDto = new DadosImpressaoDto();
-            dadosImpressaoDto.setTelefone(telefone);
-            dadosImpressaoDto.setNome(nome);
-            dadosImpressaoDto.setLogradouro(logradouro);
-            dadosImpressaoDto.setBairro(bairro);
-            dadosImpressaoDto.setPedido(montarPedido());
-            dadosImpressaoDto.setObs(obsPedido);
-            dadosImpressaoDto.setFormaPagamento(this.formaPagamento.getSelectedItem().toString());
-            dadosImpressaoDto.setTotal(this.txtTotal.getText());
-            dadosImpressaoDto.setNumCasa(numCasa);
-            dadosImpressaoDto.setTp_logradouro(tp_logradouro);
+            if(this.imprimirCheckBox.isSelected()) {
+                DadosImpressaoDto dadosImpressaoDto = new DadosImpressaoDto();
+                dadosImpressaoDto.setTelefone(telefone);
+                dadosImpressaoDto.setNome(nome);
+                dadosImpressaoDto.setLogradouro(logradouro);
+                dadosImpressaoDto.setBairro(bairro);
+                dadosImpressaoDto.setPedido(montarPedido());
+                dadosImpressaoDto.setObs(obsPedido);
+                dadosImpressaoDto.setFormaPagamento(this.formaPagamento.getSelectedItem().toString());
+                dadosImpressaoDto.setTotal(this.txtTotal.getText());
+                dadosImpressaoDto.setNumCasa(numCasa);
+                dadosImpressaoDto.setTp_logradouro(tp_logradouro);
 
-            ImpressoraUtils.reimprimir(dadosImpressaoDto);
-
+                ImpressoraUtils.reimprimir(dadosImpressaoDto);
+            }
             Vendas.AddLinhaTabela(pedido, this.nome, end, fDp, this.telefone, this.id_pedido);
             this.dispose();
             Vendas.pedidosAberto();

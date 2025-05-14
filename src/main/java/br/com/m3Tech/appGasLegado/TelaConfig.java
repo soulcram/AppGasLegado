@@ -55,7 +55,7 @@ public class TelaConfig extends JFrame {
     private JTextField txtUrlService;
     private JTextField txtContextService;
 
-    JCheckBox servicoCheckBox;
+    private JCheckBox servicoCheckBox;
 
     public TelaConfig() {
         this.initComponents();
