@@ -1,6 +1,7 @@
 package br.com.m3Tech.appGasLegado.utils;
 
 import br.com.m3Tech.appGasLegado.ProgramaGas;
+import br.com.m3Tech.appGasLegado.Service;
 import br.com.m3Tech.appGasLegado.dto.DadosImpressaoDto;
 import br.com.m3Tech.appGasLegado.service.PedidoService;
 import br.com.m3Tech.utils.StringUtils;
@@ -65,7 +66,13 @@ public class ImpressoraUtils {
 
     public static void reimprimirPedido(Integer idPedido) {
 
-        DadosImpressaoDto dadosImpressaoDto = new PedidoService().getPedido(idPedido);
+        DadosImpressaoDto dadosImpressaoDto;
+
+        if(ProgramaGas.servico){
+            dadosImpressaoDto = new Service().getPedido(idPedido);
+        }else {
+            dadosImpressaoDto = new PedidoService().getPedido(idPedido);
+        }
 
         reimprimir(dadosImpressaoDto);
 

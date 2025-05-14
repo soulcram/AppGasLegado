@@ -104,6 +104,36 @@ public class Service {
         return null;
     }
 
+    public DadosImpressaoDto getPedido(Integer idPedido){
+        try {
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
+                    .registerTypeAdapter(LocalTime.class, new LocalTimeDeserializer())
+                    .create();
+
+            ResponseEntity<String> responseEntity = new RequestApiClient(new RestTemplate(), HttpMethod.GET, ProgramaGas.urlService)
+                    .pathValue(ProgramaGas.contextoService)
+                    .pathValue("pedido")
+                    .pathValue(idPedido.toString())
+                    .addHeader("Authorization", new AutorizationUtil().getAutorization())
+                    .addAcceptJson()
+                    .addContentTypeJson()
+                    .build()
+                    .enviar();
+
+            System.out.println(responseEntity.getStatusCode());
+
+            if (HttpStatus.OK.equals(responseEntity.getStatusCode())) {
+                PedidoServicoDto pedidoServicoDto = gson.fromJson(responseEntity.getBody(), PedidoServicoDto.class);
+                return new DadosImpressaoDto(pedidoServicoDto);
+            }
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
     public void alterarLoja(AlterarLojaDto pedido){
         try {
 
