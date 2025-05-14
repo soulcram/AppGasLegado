@@ -1,8 +1,7 @@
 package br.com.m3Tech.appGasLegado;
 
 import br.com.m3Tech.appGasLegado.dto.*;
-import br.com.m3Tech.appGasLegado.entity.Config;
-import br.com.m3Tech.appGasLegado.service.ConfigService;
+import br.com.m3Tech.appGasLegado.utils.ImpressoraUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
 
@@ -10,30 +9,18 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.text.Normalizer;
 import java.text.SimpleDateFormat;
-import java.text.Normalizer.Form;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.regex.Pattern;
-import javax.print.Doc;
 import javax.print.DocFlavor;
-import javax.print.DocPrintJob;
-import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
-import javax.print.SimpleDoc;
-import javax.print.DocFlavor.INPUT_STREAM;
 import javax.print.DocFlavor.SERVICE_FORMATTED;
 import javax.print.attribute.AttributeSet;
-import javax.print.attribute.DocAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
@@ -51,8 +38,6 @@ import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableModel;
 
-import static br.com.m3Tech.appGasLegado.utils.ImpressoraUtils.SemAcento;
-import static br.com.m3Tech.appGasLegado.utils.ImpressoraUtils.gerarNotaTermica;
 
 public class TelaPedidos extends JFrame {
     String id_cliente;
@@ -398,43 +383,67 @@ public class TelaPedidos extends JFrame {
             String end = this.tp_logradouro + ": " + this.logradouro + ", " + this.numCasa + " - " + this.bairro + "     Prox. " + this.referencia;
             String fDp = this.formaPagamento.getSelectedItem().toString();
             this.obsPedido = this.pedidoObs.getText();
-            Date date = new Date();
-            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-            String hoje = dateFormat.format(date);
-            String sql = "INSERT INTO PEDIDOS (DIA,ID_CLIENTEp,STATUS,  PEDIDO, OBSERVACAO,entregador,formadepagamento,VALOR) VALUES ('" + hoje + "'," + this.id_cliente + ", 'Aberto', '" + pedido + "', '" + this.obsPedido + "','Funcionário','" + fDp + "', " + this.txtTotal.getText() + ")";
 
-            try {
-                Conectar.alterar(sql);
-            } catch (SQLException var21) {
-                ProgramaGas.salvarErro(var21.getMessage() + "  Local:  " + var21.getLocalizedMessage());
-                this.systemError.setText(var21.toString());
-            }
+            if(!ProgramaGas.servico) {
+                Date date = new Date();
+                DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                String hoje = dateFormat.format(date);
+                String sql = "INSERT INTO PEDIDOS (DIA,ID_CLIENTEp,STATUS,  PEDIDO, OBSERVACAO,entregador,formadepagamento,VALOR) VALUES ('" + hoje + "'," + this.id_cliente + ", 'Aberto', '" + pedido + "', '" + this.obsPedido + "','Funcionário','" + fDp + "', " + this.txtTotal.getText() + ")";
 
-            String sql1 = "UPDATE CLIENTES set OBSERVACAO = '" + this.obsPedido + "' where id_cliente = " + this.id_cliente + "";
 
-            try {
-                Conectar.alterar(sql1);
-            } catch (SQLException var20) {
-                ProgramaGas.salvarErro(var20.getMessage() + "  Local:  " + var20.getLocalizedMessage());
-                this.systemError.setText(var20.toString());
-            }
-
-            String sql2 = "Select * from PEDIDOS where id_clientep = " + this.id_cliente + " and dia = '" + hoje + "' and pedido = '" + pedido + "'";
-
-            try {
-                Conectar.pesquisar(sql2);
-                if (Conectar.rs.next()) {
-                    this.id_pedido = Conectar.rs.getString("id_pedido");
+                try {
+                    Conectar.alterar(sql);
+                } catch (SQLException var21) {
+                    ProgramaGas.salvarErro(var21.getMessage() + "  Local:  " + var21.getLocalizedMessage());
+                    this.systemError.setText(var21.toString());
                 }
-                Conectar.rs.close();
-            } catch (SQLException var19) {
-                ProgramaGas.salvarErro(var19.getMessage() + "  Local:  " + var19.getLocalizedMessage());
-                this.systemError.setText(var19.toString());
-            }
 
-            Vendas.AddLinhaTabela(pedido, this.nome, end, fDp, this.telefone, this.id_pedido);
-            this.dispose();
-            Vendas.pedidosAberto();
+                String sql1 = "UPDATE CLIENTES set OBSERVACAO = '" + this.obsPedido + "' where id_cliente = " + this.id_cliente + "";
+
+                try {
+                    Conectar.alterar(sql1);
+                } catch (SQLException var20) {
+                    ProgramaGas.salvarErro(var20.getMessage() + "  Local:  " + var20.getLocalizedMessage());
+                    this.systemError.setText(var20.toString());
+                }
+
+                String sql2 = "Select * from PEDIDOS where id_clientep = " + this.id_cliente + " and dia = '" + hoje + "' and pedido = '" + pedido + "'";
+
+                try {
+                    Conectar.pesquisar(sql2);
+                    if (Conectar.rs.next()) {
+                        this.id_pedido = Conectar.rs.getString("id_pedido");
+                    }
+                    Conectar.rs.close();
+                } catch (SQLException var19) {
+                    ProgramaGas.salvarErro(var19.getMessage() + "  Local:  " + var19.getLocalizedMessage());
+                    this.systemError.setText(var19.toString());
+                }
+
+
+            }else {
+
+
+                PedidoDto pedidoDto = new PedidoDto();
+                pedidoDto.setTelefoneCliente(this.telefone);
+                pedidoDto.setNomeCliente(this.nome);
+                pedidoDto.setCep(this.cep);
+                pedidoDto.setLogradouro(this.logradouro);
+                pedidoDto.setNumeroResidencia(this.numCasa);
+                pedidoDto.setComplemento("Prox. " + this.referencia);
+                pedidoDto.setBairro(this.bairro);
+                pedidoDto.setObservacao(this.obsPedido);
+                pedidoDto.setFormaPagamento(fDp);
+                pedidoDto.setValorTotal(new BigDecimal(this.txtTotal.getText()));
+                pedidoDto.setLoja(ProgramaGas.nomeLoja != null ? ProgramaGas.nomeLoja.trim() : "");
+                pedidoDto.setProdutos(this.montarPedidoParaEnviar());
+
+                Service service = new Service();
+                PedidoServicoDto pedidoEnviado = service.enviarPedido(pedidoDto);
+
+                this.id_pedido = pedidoEnviado.getIdPedido().toString();
+
+            }
 
             DadosImpressaoDto dadosImpressaoDto = new DadosImpressaoDto();
             dadosImpressaoDto.setTelefone(telefone);
@@ -448,37 +457,11 @@ public class TelaPedidos extends JFrame {
             dadosImpressaoDto.setNumCasa(numCasa);
             dadosImpressaoDto.setTp_logradouro(tp_logradouro);
 
-            InputStream stream = new ByteArrayInputStream((SemAcento(gerarNotaTermica(dadosImpressaoDto)) + '\u001b' + 'w').getBytes());
-            PrintService impressora = this.ps[this.boxImpressoras.getSelectedIndex()];
-            DocPrintJob dpj = impressora.createPrintJob();
-            DocFlavor flavor = INPUT_STREAM.AUTOSENSE;
-            Doc documentoTexto = new SimpleDoc(stream, flavor, (DocAttributeSet)null);
+            ImpressoraUtils.reimprimir(dadosImpressaoDto);
 
-            try {
-                dpj.print(documentoTexto, (PrintRequestAttributeSet)null);
-            } catch (PrintException var18) {
-                ProgramaGas.salvarErro(var18.getMessage() + "  Local:  " + var18.getLocalizedMessage());
-            }
-
-
-            Config config = new ConfigService().getConfig();
-
-            PedidoDto pedidoDto = new PedidoDto();
-            pedidoDto.setTelefoneCliente(this.telefone);
-            pedidoDto.setNomeCliente(this.nome);
-            pedidoDto.setCep(this.cep);
-            pedidoDto.setLogradouro(this.logradouro);
-            pedidoDto.setNumeroResidencia(this.numCasa);
-            pedidoDto.setComplemento("Prox. " + this.referencia);
-            pedidoDto.setBairro(this.bairro);
-            pedidoDto.setObservacao(this.obsPedido );
-            pedidoDto.setFormaPagamento(fDp);
-            pedidoDto.setValorTotal(new BigDecimal(this.txtTotal.getText()));
-            pedidoDto.setLoja(config.getNomeloja() != null ? config.getNomeloja().trim() : "");
-            pedidoDto.setProdutos(this.montarPedidoParaEnviar());
-
-            Service service = new Service();
-            service.enviarPedido(pedidoDto);
+            Vendas.AddLinhaTabela(pedido, this.nome, end, fDp, this.telefone, this.id_pedido);
+            this.dispose();
+            Vendas.pedidosAberto();
         }
 
     }

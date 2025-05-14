@@ -41,6 +41,8 @@ public class Conectar {
             Connection con = DriverManager.getConnection("jdbc:derby:C:\\BancoDeDados\\ProgramaGas", "soulcram", "p4r4tud0");
             Statement stm = con.createStatement();
             stm.executeUpdate(sql);
+            stm.close();
+            con.close();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException var3) {
             log.error(var3.getMessage() + "  Local:  " + var3.getLocalizedMessage());
         }

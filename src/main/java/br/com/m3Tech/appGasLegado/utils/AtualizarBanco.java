@@ -9,8 +9,6 @@ public class AtualizarBanco {
 
     public static void atualizar(){
         atualizarTabelaConfig();
-
-
     }
 
     private static void atualizarTabelaConfig(){
@@ -19,6 +17,7 @@ public class AtualizarBanco {
         novaColunaNomeLojaTbConfig();
         novaColunaContextServiceTbConfig();
         novaColunaUrlServiceTbConfig();
+        novaColunaServicoTbConfig();
         novaColunaValorPedidos();
     }
 
@@ -106,6 +105,24 @@ public class AtualizarBanco {
             if(!rs.next()) {
                 System.out.println("Adicionando nova coluna URL_SERVICE na tb CONFIG");
                 Conectar.alterar("ALTER TABLE CONFIG ADD COLUMN URL_SERVICE VARCHAR(100)");
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private static void novaColunaServicoTbConfig() {
+        try {
+            String sqlValida = "SELECT 1 \n" +
+                    "FROM SYS.SYSCOLUMNS c\n" +
+                    "JOIN SYS.SYSTABLES t ON c.REFERENCEID = t.TABLEID\n" +
+                    "WHERE t.TABLENAME = 'CONFIG' AND c.COLUMNNAME = 'SERVICO'";
+            ResultSet rs = Conectar.pesquisar(sqlValida);
+
+            assert rs != null;
+            if(!rs.next()) {
+                System.out.println("Adicionando nova coluna SERVICO na tb CONFIG");
+                Conectar.alterar("ALTER TABLE CONFIG ADD COLUMN SERVICO BOOLEAN");
             }
         } catch (SQLException e) {
             System.out.println(e.getMessage());

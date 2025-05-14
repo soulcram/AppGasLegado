@@ -2,6 +2,7 @@ package br.com.m3Tech.appGasLegado.service;
 
 import br.com.m3Tech.appGasLegado.Conectar;
 import br.com.m3Tech.appGasLegado.entity.Config;
+import br.com.m3Tech.utils.BooleanUtils;
 import br.com.m3Tech.utils.StringUtils;
 
 import java.sql.ResultSet;
@@ -11,11 +12,11 @@ public class ConfigService {
 
     public Config getConfig(){
         try {
-            String exibirColunas = "SELECT ID_CONFIG, DATA, IMPRESSORA, NOMEPC, PORTA, TEL_INI, TEL_FIM, NOME_LOJA, " +
+            String sqlQuery = "SELECT ID_CONFIG, DATA, IMPRESSORA, NOMEPC, PORTA, TEL_INI, TEL_FIM, NOME_LOJA, SERVICO, " +
                     " CONTEXT_SERVICE, URL_SERVICE " +
                     " FROM CONFIG order by ID_CONFIG FETCH FIRST 1 ROWS ONLY";
 
-            ResultSet rs = Conectar.pesquisar(exibirColunas);
+            ResultSet rs = Conectar.pesquisar(sqlQuery);
 
             if(rs == null){
                 System.out.println("Result Set nulo.");
@@ -31,6 +32,7 @@ public class ConfigService {
                 config.setUrlService(rs.getString("URL_SERVICE"));
                 config.setIniTel(rs.getString("TEL_INI"));
                 config.setFimTel(rs.getString("TEL_FIM"));
+                config.setServico(rs.getBoolean("SERVICO"));
                 System.out.println(config);
                 return config;
             }
@@ -75,6 +77,10 @@ public class ConfigService {
         if(!StringUtils.emptyOrNull(config.getFimTel())){
             sql += " TEL_FIM = " + config.getFimTel().trim() + " ,";
         }
+
+
+         sql += " SERVICO = " + config.getServico() + " ,";
+
 
         if(!StringUtils.emptyOrNull(config.getContextService())){
             sql += " CONTEXT_SERVICE = '" + config.getContextService().trim() + "'";

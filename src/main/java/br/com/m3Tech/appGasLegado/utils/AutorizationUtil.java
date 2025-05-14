@@ -1,4 +1,4 @@
-package br.com.m3Tech.appGasLegado;
+package br.com.m3Tech.appGasLegado.utils;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

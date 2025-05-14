@@ -212,7 +212,11 @@ public final class RequestApiClient {
             log.error("Erro na requisicao ao barramento ", e);
             RetornoInesperado retornoInesperado;
             if (e instanceof HttpStatusCodeException) {
-                log.error("Response do Erro Client:  {}", ((HttpStatusCodeException) e).getResponseBodyAsString());
+                String responseBodyAsString = ((HttpStatusCodeException) e).getResponseBodyAsString();
+                if( !StringUtils.isBlank(responseBodyAsString) && !"Nenhum pedido encontrado.".equals(responseBodyAsString)){
+                    log.error("Response do Erro Client:  {}", responseBodyAsString);
+                }
+
                 retornoInesperado = new RetornoInesperado(((HttpStatusCodeException) e).getStatusCode().toString(),
                         e.getMessage(), ((HttpStatusCodeException) e).getResponseBodyAsString(), e.getMessage());
             } else {

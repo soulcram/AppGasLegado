@@ -14,4 +14,5 @@ public class Config {
     String urlService;
     String nomeloja;
     String data;
+    Boolean servico;
 }

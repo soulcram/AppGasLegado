@@ -2,7 +2,9 @@ package br.com.m3Tech.appGasLegado;
 
 import br.com.m3Tech.appGasLegado.dto.ClienteDto;
 import br.com.m3Tech.appGasLegado.dto.OpcoesDto;
+import br.com.m3Tech.appGasLegado.dto.PedidoServicoDto;
 import br.com.m3Tech.appGasLegado.service.ClienteService;
+import br.com.m3Tech.utils.BooleanUtils;
 import programagas.Mascaras;
 import programagas.PintarTabela;
 
@@ -23,6 +25,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import javax.swing.DefaultCellEditor;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
@@ -58,14 +61,14 @@ public class Vendas extends JFrame {
     private static JLabel pedidosAbertosTxt1;
     private JComboBox<String> statusCol;
     public static JLabel systemError;
-    public static JTable tabela1;
+
 
     public Vendas() {
         this.initComponents();
         this.lValidade.setText("Licença valida até " + ProgramaGas.DataLimite);
-        tabela1.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(this.entregadorCol));
-        tabela1.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(this.statusCol));
-        tabela1.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(this.formPag));
+        ProgramaGas.tabela1.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(this.entregadorCol));
+        ProgramaGas.tabela1.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(this.statusCol));
+        ProgramaGas.tabela1.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(this.formPag));
         Mascaras.mascaraTelefone(this.entradaTelTxt);
         String sql = "Select * from Funcionarios";
 
@@ -90,11 +93,11 @@ public class Vendas extends JFrame {
     }
 
     public static void pedidosAberto() {
-        int linhas = tabela1.getRowCount();
+        int linhas = ProgramaGas.tabela1.getRowCount();
         int pedidoAbertos = 0;
 
         for(int i = 0; i < linhas; ++i) {
-            String valor = tabela1.getValueAt(i, 6).toString();
+            String valor = ProgramaGas.tabela1.getValueAt(i, 6).toString();
             if ("Aberto".equals(valor)) {
                 ++pedidoAbertos;
             }
@@ -105,7 +108,7 @@ public class Vendas extends JFrame {
     }
 
     public static void AddLinhaTabela(String pedido, String nome, String endereco, String fDp, String telefone, String id) {
-        DefaultTableModel model = (DefaultTableModel)tabela1.getModel();
+        DefaultTableModel model = (DefaultTableModel)ProgramaGas.tabela1.getModel();
         Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat("HH:mm");
         String hora = dateFormat.format(date);
@@ -119,7 +122,7 @@ public class Vendas extends JFrame {
         this.formPag = new JComboBox();
         this.jPanel1 = new JPanel();
         this.jScrollPane1 = new JScrollPane();
-        tabela1 = new JTable();
+        ProgramaGas.tabela1 = new JTable();
         this.entradaTelTxt = new JFormattedTextField();
         this.jLabel1 = new JLabel();
         this.jButton1 = new JButton();
@@ -139,7 +142,7 @@ public class Vendas extends JFrame {
                 statusColItemStateChanged(evt);
             }
         });
-        this.statusCol.getAccessibleContext().setAccessibleParent(tabela1);
+        this.statusCol.getAccessibleContext().setAccessibleParent(ProgramaGas.tabela1);
         this.entregadorCol.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent evt) {
                 entregadorColItemStateChanged(evt);
@@ -150,7 +153,7 @@ public class Vendas extends JFrame {
         this.setTitle("Consigaz");
         this.setSize(new Dimension(1000, 1000));
         this.jPanel1.setBackground(new Color(255, 255, 204));
-        tabela1.setModel(new DefaultTableModel(new Object[0][], new String[]{"Pedido", "Nome ", "Telefone", "Endereço", "Forma de Pagamento", "Entregador", "Status", "Hora", "ID"}) {
+        ProgramaGas.tabela1.setModel(new DefaultTableModel(new Object[0][], new String[]{"Pedido", "Nome ", "Telefone", "Endereço", "Forma de Pagamento", "Entregador", "Status", "Hora", "ID"}) {
             Class[] types = new Class[]{String.class, String.class, String.class, String.class, String.class, String.class, String.class, String.class, String.class};
             boolean[] canEdit = new boolean[]{false, false, false, false, true, true, true, false, false};
 
@@ -162,22 +165,22 @@ public class Vendas extends JFrame {
                 return this.canEdit[columnIndex];
             }
         });
-        tabela1.addMouseListener(new MouseAdapter() {
+        ProgramaGas.tabela1.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 tabela1MouseClicked(evt);
             }
         });
-        this.jScrollPane1.setViewportView(tabela1);
-        if (tabela1.getColumnModel().getColumnCount() > 0) {
-            tabela1.getColumnModel().getColumn(0).setMaxWidth(300);
-            tabela1.getColumnModel().getColumn(1).setMaxWidth(150);
-            tabela1.getColumnModel().getColumn(2).setMaxWidth(100);
-            tabela1.getColumnModel().getColumn(3).setMaxWidth(1000);
-            tabela1.getColumnModel().getColumn(4).setMaxWidth(150);
-            tabela1.getColumnModel().getColumn(5).setMaxWidth(150);
-            tabela1.getColumnModel().getColumn(6).setMaxWidth(100);
-            tabela1.getColumnModel().getColumn(7).setMaxWidth(100);
-            tabela1.getColumnModel().getColumn(8).setMaxWidth(10);
+        this.jScrollPane1.setViewportView(ProgramaGas.tabela1);
+        if (ProgramaGas.tabela1.getColumnModel().getColumnCount() > 0) {
+            ProgramaGas.tabela1.getColumnModel().getColumn(0).setMaxWidth(300);
+            ProgramaGas.tabela1.getColumnModel().getColumn(1).setMaxWidth(150);
+            ProgramaGas.tabela1.getColumnModel().getColumn(2).setMaxWidth(100);
+            ProgramaGas.tabela1.getColumnModel().getColumn(3).setMaxWidth(1000);
+            ProgramaGas.tabela1.getColumnModel().getColumn(4).setMaxWidth(150);
+            ProgramaGas.tabela1.getColumnModel().getColumn(5).setMaxWidth(150);
+            ProgramaGas.tabela1.getColumnModel().getColumn(6).setMaxWidth(100);
+            ProgramaGas.tabela1.getColumnModel().getColumn(7).setMaxWidth(100);
+            ProgramaGas.tabela1.getColumnModel().getColumn(8).setMaxWidth(10);
         }
 
         this.entradaTelTxt.addFocusListener(new FocusAdapter() {
@@ -272,8 +275,8 @@ public class Vendas extends JFrame {
     private void statusColItemStateChanged(ItemEvent evt) {
         TableCellRenderer renderer = new PintarTabela();
 
-        for(int c = 0; c < tabela1.getColumnCount(); ++c) {
-            tabela1.setDefaultRenderer(tabela1.getColumnClass(c), renderer);
+        for(int c = 0; c < ProgramaGas.tabela1.getColumnCount(); ++c) {
+            ProgramaGas.tabela1.setDefaultRenderer(ProgramaGas.tabela1.getColumnClass(c), renderer);
         }
 
     }
@@ -290,8 +293,8 @@ public class Vendas extends JFrame {
         salvar();
         if (evt.getClickCount() == 2) {
             OpcoesDto opcoesDto = new OpcoesDto();
-            opcoesDto.setIdPedido(Integer.valueOf(tabela1.getValueAt(tabela1.getSelectedRow(), 8).toString()));
-            opcoesDto.setTelefone(tabela1.getValueAt(tabela1.getSelectedRow(), 2).toString());
+            opcoesDto.setIdPedido(Integer.valueOf(ProgramaGas.tabela1.getValueAt(ProgramaGas.tabela1.getSelectedRow(), 8).toString()));
+            opcoesDto.setTelefone(ProgramaGas.tabela1.getValueAt(ProgramaGas.tabela1.getSelectedRow(), 2).toString());
 
             (new TelaOpcoes(opcoesDto)).setVisible(true);
         }
@@ -299,32 +302,46 @@ public class Vendas extends JFrame {
     }
 
     private void jButton2ActionPerformed(ActionEvent evt) {
-        DefaultTableModel model = (DefaultTableModel)tabela1.getModel();
+        DefaultTableModel model = (DefaultTableModel)ProgramaGas.tabela1.getModel();
         model.setNumRows(0);
-        Date date = new Date();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        String hoje = dateFormat.format(date);
-        String sql = "select * from pedidos INNER JOIN CLIENTES ON ID_CLIENTE = ID_CLIENTEp INNER JOIN ENDERECO ON ID_CEP = ID_ENDERECO where DIA = '" + hoje + "'";
 
-        try {
-            Conectar.pesquisar(sql);
+        if(BooleanUtils.defaultFalseIfNull(ProgramaGas.servico)){
 
-            while(Conectar.rs.next()) {
-                String endereco = Conectar.rs.getString("tp_logradouro") + ": " + Conectar.rs.getString("logradouro") + ", " + Conectar.rs.getString("numero") + " - " + Conectar.rs.getString("bairro") + "    Prox: " + Conectar.rs.getString("referencia");
-                String entregador;
-                if ("".equals(Conectar.rs.getString("entregador"))) {
-                    entregador = "Funcionário";
-                } else {
-                    entregador = Conectar.rs.getString("entregador");
-                }
+            List<PedidoServicoDto> allPedidos = new Service().getAllPedidos();
 
-                String[] conteudo = new String[]{Conectar.rs.getString("pedido"), Conectar.rs.getString("nome"), Conectar.rs.getString("telefone"), endereco, Conectar.rs.getString("formadepagamento"), entregador, Conectar.rs.getString("Status"), "", Conectar.rs.getString("id_pedido")};
+            for(PedidoServicoDto pedidoServicoDto : allPedidos){
+                String endereco = pedidoServicoDto.getLogradouro() + ", " + pedidoServicoDto.getNumeroResidencia() + " - " + pedidoServicoDto.getBairro() + "    Prox: " + pedidoServicoDto.getComplemento();
+
+                String[] conteudo = new String[]{pedidoServicoDto.getPedido(), pedidoServicoDto.getNomeCliente(), pedidoServicoDto.getTelefoneCliente(), endereco, pedidoServicoDto.getFormaPagamento(), "Funcionário", "Status", pedidoServicoDto.getHora(), pedidoServicoDto.getIdPedido().toString()};
                 model.addRow(conteudo);
             }
-            Conectar.rs.close();
-        } catch (SQLException var10) {
-            ProgramaGas.salvarErro(var10.getMessage() + "  Local:  " + var10.getLocalizedMessage());
-            systemError.setText(var10.toString());
+
+        }else {
+            Date date = new Date();
+            DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            String hoje = dateFormat.format(date);
+            String sql = "select * from pedidos INNER JOIN CLIENTES ON ID_CLIENTE = ID_CLIENTEp INNER JOIN ENDERECO ON ID_CEP = ID_ENDERECO where DIA = '" + hoje + "'";
+
+            try {
+                Conectar.pesquisar(sql);
+
+                while (Conectar.rs.next()) {
+                    String endereco = Conectar.rs.getString("tp_logradouro") + ": " + Conectar.rs.getString("logradouro") + ", " + Conectar.rs.getString("numero") + " - " + Conectar.rs.getString("bairro") + "    Prox: " + Conectar.rs.getString("referencia");
+                    String entregador;
+                    if ("".equals(Conectar.rs.getString("entregador"))) {
+                        entregador = "Funcionário";
+                    } else {
+                        entregador = Conectar.rs.getString("entregador");
+                    }
+
+                    String[] conteudo = new String[]{Conectar.rs.getString("pedido"), Conectar.rs.getString("nome"), Conectar.rs.getString("telefone"), endereco, Conectar.rs.getString("formadepagamento"), entregador, Conectar.rs.getString("Status"), "", Conectar.rs.getString("id_pedido")};
+                    model.addRow(conteudo);
+                }
+                Conectar.rs.close();
+            } catch (SQLException var10) {
+                ProgramaGas.salvarErro(var10.getMessage() + "  Local:  " + var10.getLocalizedMessage());
+                systemError.setText(var10.toString());
+            }
         }
 
     }
@@ -333,7 +350,7 @@ public class Vendas extends JFrame {
     }
 
     private void jButton3ActionPerformed(ActionEvent evt) {
-        if (tabela1.getRowCount() > 0) {
+        if (ProgramaGas.tabela1.getRowCount() > 0) {
             salvar();
             pedidosAberto();
         }
@@ -352,13 +369,13 @@ public class Vendas extends JFrame {
     }
 
     public static void salvar() {
-        int linhas = tabela1.getRowCount();
+        int linhas = ProgramaGas.tabela1.getRowCount();
         if (linhas > 0) {
             for(int i = 0; i < linhas; ++i) {
-                String id = tabela1.getValueAt(i, 8).toString();
-                String entregador = tabela1.getValueAt(i, 5).toString();
-                String Status = tabela1.getValueAt(i, 6).toString();
-                String fdp = tabela1.getValueAt(i, 4).toString();
+                String id = ProgramaGas.tabela1.getValueAt(i, 8).toString();
+                String entregador = ProgramaGas.tabela1.getValueAt(i, 5).toString();
+                String Status = ProgramaGas.tabela1.getValueAt(i, 6).toString();
+                String fdp = ProgramaGas.tabela1.getValueAt(i, 4).toString();
                 String sql = "update PEDIDOS set status = '" + Status + "', entregador = '" + entregador + "',formadepagamento = '" + fdp + "' where id_pedido = " + id + " ";
 
                 try {

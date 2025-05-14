@@ -1,9 +1,10 @@
 package br.com.m3Tech.appGasLegado;
 
 
-import programagas.Conectar;
-import programagas.PrimeiroAcesso;
-import programagas.Trava;
+import br.com.m3Tech.appGasLegado.dto.PedidoServicoDto;
+import br.com.m3Tech.appGasLegado.entity.Config;
+import br.com.m3Tech.appGasLegado.service.ConfigService;
+import com.google.common.collect.Lists;
 import programagas.Vendas;
 import programagas.Warning;
 
@@ -17,86 +18,37 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.swing.JOptionPane;
+import java.util.List;
+import javax.swing.*;
 
 public class ProgramaGas {
     public static String Porta;
-    public static String NomePc;
+    public static String nomeLoja;
     public static String DataLimite;
     public static String Impressora;
-    public static int DiasRestantes;
+
+    public static String contextoService;
+    public static String urlService;
+    public static Boolean servico;
+
+    public static JTable tabela1;
 
     public ProgramaGas() {
     }
 
-    public static void main(String[] args) {
-        Conectar.startBd();
-        CarregarConfiguracoes();
-        Date date = new Date();
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        String hoje = dateFormat.format(date);
-        DiasRestantes = defineData(hoje, DataLimite);
-
-        try {
-            label45: {
-                label39: {
-                    if (NomePc == null) {
-                        if (InetAddress.getLocalHost().getHostName() == null) {
-                            break label39;
-                        }
-                    } else if (NomePc.equals(InetAddress.getLocalHost().getHostName())) {
-                        break label39;
-                    }
-
-                    PrimeiroAcesso.main(args);
-                    break label45;
-                }
-
-                if (DiasRestantes <= 5 & DiasRestantes > 0) {
-                    Warning.main(args);
-                } else if (DiasRestantes <= 0) {
-                    Trava.main(args);
-                } else if (DiasRestantes > 5) {
-                    Vendas.main(args);
-                }
-            }
-        } catch (UnknownHostException var5) {
-            salvarErro(var5.getMessage() + "  Local:  " + var5.getLocalizedMessage());
-        }
-
-        System.out.println("Dias restantes " + defineData(hoje, DataLimite));
-    }
-
-    public static int defineData(String data1, String data2) {
-        int diasRestantes;
-        try {
-            int dia1 = Integer.parseInt(data1.substring(0, 2));
-            int dia2 = Integer.parseInt(data2.substring(0, 2));
-            int mes1 = Integer.parseInt(data1.substring(3, 5));
-            int mes2 = Integer.parseInt(data2.substring(3, 5));
-            int ano1 = Integer.parseInt(data1.substring(6, 10));
-            int ano2 = Integer.parseInt(data2.substring(6, 10));
-            diasRestantes = (ano2 - ano1) * 360 + (mes2 - mes1) * 30 + (dia2 - dia1);
-        } catch (NullPointerException var10) {
-            diasRestantes = 5;
-        }
-
-        return diasRestantes;
-    }
-
     public static void CarregarConfiguracoes() {
         try {
-            String sql = "SELECT * FROM CONFIG where id_config = 1";
-            Conectar.pesquisar(sql);
-            if (Conectar.rs.next()) {
-                Porta = Conectar.rs.getString("PORTA");
-                NomePc = Conectar.rs.getString("NOMEPC");
-                DataLimite = Conectar.rs.getString("DATA");
-                Impressora = Conectar.rs.getString("IMPRESSORA");
-            }
+            Config config = new ConfigService().getConfig();
 
-            Conectar.rs.close();
-        } catch (SQLException var1) {
+            Porta = config.getPortaCom();
+            nomeLoja = config.getNomeloja();
+            DataLimite = config.getData();
+            Impressora = config.getImpressora();
+            servico = config.getServico();
+            contextoService = config.getContextService().trim();
+            urlService = config.getUrlService() != null ? config.getUrlService().trim() : "" ;
+
+        } catch (Exception var1) {
             salvarErro(var1.getMessage());
         }
 

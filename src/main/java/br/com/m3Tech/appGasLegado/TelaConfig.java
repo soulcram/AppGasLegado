@@ -2,6 +2,7 @@ package br.com.m3Tech.appGasLegado;
 
 import br.com.m3Tech.appGasLegado.entity.Config;
 import br.com.m3Tech.appGasLegado.service.ConfigService;
+import br.com.m3Tech.utils.BooleanUtils;
 import br.com.m3Tech.utils.StringUtils;
 import programagas.Mascaras;
 
@@ -43,6 +44,8 @@ public class TelaConfig extends JFrame {
     private JLabel jLabelContextService;
     private JLabel jLabelTelIni;
     private JLabel jLabelTelFim;
+
+    private JLabel jLabelServico;
     private JPanel jPanel1;
     private JLabel systemError;
     private JFormattedTextField txtNovaData;
@@ -51,6 +54,8 @@ public class TelaConfig extends JFrame {
     private JTextField txtNomeLoja;
     private JTextField txtUrlService;
     private JTextField txtContextService;
+
+    JCheckBox servicoCheckBox;
 
     public TelaConfig() {
         this.initComponents();
@@ -108,6 +113,9 @@ public class TelaConfig extends JFrame {
             if (!StringUtils.emptyOrNull(config.getFimTel())) {
                 this.txtFimTel.setText(config.getFimTel());
             }
+
+            servicoCheckBox.setSelected(BooleanUtils.defaultFalseIfNull(config.getServico()));
+
         }
 
     }
@@ -192,6 +200,14 @@ public class TelaConfig extends JFrame {
         this.txtFimTel = new JTextField();
         this.txtFimTel.setBounds(180,290,250,30);
 
+        this.jLabelServico = new JLabel();
+        this.jLabelServico.setBounds(10,330,150,30);
+        this.jLabelServico.setFont(new Font("Tahoma", 1, 12));
+        this.jLabelServico.setText("Serviço");
+
+        this.servicoCheckBox = new JCheckBox();
+        this.servicoCheckBox.setBounds(180,330,150,30);
+
 
         this.bOK.setText("OK");
         this.bOK.setBounds(300,460,60,30);
@@ -229,6 +245,8 @@ public class TelaConfig extends JFrame {
         jPanel1.add(jLabelTelFim);
         jPanel1.add(txtFimTel);
 
+        jPanel1.add(jLabelServico);
+        jPanel1.add(servicoCheckBox);
 
         jPanel1.add(bOK);
 
@@ -253,6 +271,7 @@ public class TelaConfig extends JFrame {
         String contextService = !StringUtils.emptyOrNull(this.txtContextService.getText()) ? this.txtContextService.getText() : "appConsigaz";
         String telIni = this.txtIniTel.getText();
         String telFim = this.txtFimTel.getText();
+        Boolean servico = this.servicoCheckBox.isSelected();
 
         config.setData(novaData);
         config.setImpressora(impressora);
@@ -262,6 +281,7 @@ public class TelaConfig extends JFrame {
         config.setContextService(contextService);
         config.setIniTel(telIni);
         config.setFimTel(telFim);
+        config.setServico(servico);
 
        new ConfigService().salvarConfig(config);
 

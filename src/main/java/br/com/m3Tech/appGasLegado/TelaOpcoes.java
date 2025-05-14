@@ -26,6 +26,7 @@ import static br.com.m3Tech.appGasLegado.utils.ImpressoraUtils.gerarNotaTermica;
 public class TelaOpcoes extends JFrame {
     private JButton botaoEditarCliente;
     private JButton botaoReimprimir;
+    private JButton botaoEnviarParaLoja;
     private JPanel jPanel1;
 
 
@@ -75,6 +76,20 @@ public class TelaOpcoes extends JFrame {
             }
         });
 
+        this.botaoEnviarParaLoja = new JButton();
+        this.botaoEnviarParaLoja.setBackground(new Color(0, 163, 253));
+        this.botaoEnviarParaLoja.setFont(new Font("Tahoma", 1, 12));
+        this.botaoEnviarParaLoja.setText("Enviar para Loja");
+        this.botaoEnviarParaLoja.setBounds(10,110,200,30);
+        this.botaoEnviarParaLoja.setVisible(true);
+        this.botaoEnviarParaLoja.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                botaoEnviarParaLojaActionPerformed(evt);
+            }
+        });
+
+
+
 
         jPanel1.setBounds(10,10,300,300);
         jPanel1.setLayout(null);
@@ -82,6 +97,7 @@ public class TelaOpcoes extends JFrame {
 
         jPanel1.add(botaoEditarCliente);
         jPanel1.add(botaoReimprimir);
+        jPanel1.add(botaoEnviarParaLoja);
 
         this.setBounds(10, 10, 300, 300);
         this.setLayout(null);
@@ -105,9 +121,15 @@ public class TelaOpcoes extends JFrame {
             return;
         }
 
-        ImpressoraUtils.reimprimir(this.idPedido);
+        ImpressoraUtils.reimprimirPedido(this.idPedido);
 
 
+        this.dispose();
+    }
+
+    private void botaoEnviarParaLojaActionPerformed(ActionEvent evt) {
+
+        (new TelaEnviarParaLoja(idPedido)).setVisible(true);
         this.dispose();
     }
 
