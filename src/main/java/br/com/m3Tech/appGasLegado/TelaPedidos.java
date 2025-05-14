@@ -2,6 +2,7 @@ package br.com.m3Tech.appGasLegado;
 
 import br.com.m3Tech.appGasLegado.dto.*;
 import br.com.m3Tech.appGasLegado.utils.ImpressoraUtils;
+import br.com.m3Tech.utils.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
 
@@ -382,6 +383,9 @@ public class TelaPedidos extends JFrame {
             String fDp = this.formaPagamento.getSelectedItem().toString();
             this.obsPedido = this.pedidoObs.getText();
 
+
+
+
             if(!ProgramaGas.servico) {
                 Date date = new Date();
                 DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
@@ -432,7 +436,7 @@ public class TelaPedidos extends JFrame {
                 pedidoDto.setBairro(this.bairro);
                 pedidoDto.setObservacao(this.obsPedido);
                 pedidoDto.setFormaPagamento(fDp);
-                pedidoDto.setValorTotal(new BigDecimal(this.txtTotal.getText()));
+                pedidoDto.setValorTotal( getValorFormatado(this.txtTotal.getText()));
                 pedidoDto.setLoja(ProgramaGas.nomeLoja != null ? ProgramaGas.nomeLoja.trim() : "");
                 pedidoDto.setProdutos(this.montarPedidoParaEnviar());
 
@@ -523,7 +527,8 @@ public class TelaPedidos extends JFrame {
         PedidoProdutoDto primeiroProduto = new PedidoProdutoDto();
         primeiroProduto.setNome((String) this.jTable2.getValueAt(0, 0));
         primeiroProduto.setQuantidade(Integer.valueOf((String) this.jTable2.getValueAt(0, 1)));
-        primeiroProduto.setValor(new BigDecimal(((String) this.jTable2.getValueAt(0, 2)).replaceAll(",",".")));
+
+        primeiroProduto.setValor(getValorFormatado((String) this.jTable2.getValueAt(0, 2)));
 
         retorno.add(primeiroProduto);
 
@@ -532,14 +537,26 @@ public class TelaPedidos extends JFrame {
             for(int i = 2; i <= linhas; ++i) {
                 PedidoProdutoDto demaisProduto = new PedidoProdutoDto();
                 demaisProduto.setNome((String) this.jTable2.getValueAt(i - 1, 0));
-                demaisProduto.setQuantidade((Integer) this.jTable2.getValueAt(i - 1, 1));
-                demaisProduto.setValor(new BigDecimal((String) this.jTable2.getValueAt(i - 1, 2)));
+                demaisProduto.setQuantidade(Integer.valueOf((String) this.jTable2.getValueAt(0, 1)));
+                demaisProduto.setValor(getValorFormatado((String) this.jTable2.getValueAt(i - 1, 2)));
 
                 retorno.add(demaisProduto);
             }
         }
 
         return retorno;
+    }
+
+    private BigDecimal getValorFormatado(String valor){
+
+        if(StringUtils.emptyOrNull(valor)){
+            return BigDecimal.ZERO;
+        }
+
+        String valorFormatado = valor.replaceAll(",", ".");
+
+        return new BigDecimal(valorFormatado.trim());
+
     }
 }
 
