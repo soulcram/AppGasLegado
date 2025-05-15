@@ -55,6 +55,7 @@ public class ImpressoraUtils {
         nota = nota + "                                " + System.getProperty("line.separator") ;
         nota = nota + "                                " + System.getProperty("line.separator") ;
         nota = nota + "                                " + System.getProperty("line.separator") ;
+
         return nota;
     }
 
@@ -104,12 +105,14 @@ public class ImpressoraUtils {
 
             String textoNota = SemAcento(gerarNotaTermica(dadosImpressaoDto));
 
-            byte[] corte = new byte[]{0x1B, 'i'};
+            byte[] tentantivaCorte1 = new byte[]{0x1B, 'i'};
+            byte[] tentantivaCorte2 = new byte[]{0x1B, 'w'};
 
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            outputStream.write(textoNota.getBytes("CP437"));
-            outputStream.write(corte);
+            outputStream.write((textoNota + '\u001b' + 'w').getBytes("CP437"));
+            outputStream.write(tentantivaCorte1);
+            outputStream.write(tentantivaCorte2);
 
             InputStream stream = new ByteArrayInputStream(outputStream.toByteArray());
 
