@@ -7,9 +7,11 @@ import br.com.m3Tech.appGasLegado.utils.AutorizationUtil;
 import br.com.m3Tech.appGasLegado.utils.LocalDateDeserializer;
 import br.com.m3Tech.appGasLegado.utils.LocalTimeDeserializer;
 import br.com.m3Tech.utils.StringUtils;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +23,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-
+@Slf4j
 public class Service {
 
 
@@ -53,6 +55,39 @@ public class Service {
             }
         }catch (Exception e){
             System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public List<ClienteDto> getClientesByNome(String nome){
+        try {
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
+                    .create();
+
+            if (StringUtils.emptyOrNull(nome)) {
+                return Lists.newArrayList();
+            }
+
+
+            ResponseEntity<String> responseEntity = new RequestApiClient(new RestTemplate(), HttpMethod.GET, ProgramaGas.urlService)
+                    .pathValue(ProgramaGas.contextoService)
+                    .pathValue("cliente")
+                    .pathValue("nome")
+                    .pathValue(nome)
+                    .addHeader("Authorization", new AutorizationUtil().getAutorization())
+                    .addAcceptJson()
+                    .addContentTypeJson()
+                    .build()
+                    .enviar();
+
+            if (HttpStatus.OK.equals(responseEntity.getStatusCode())) {
+                Type listType = new TypeToken<List<ClienteDto>>() {}.getType();
+                return gson.fromJson(responseEntity.getBody(), listType);
+            }
+        }catch (Exception e){
+            log.error(e.getMessage());
         }
         return null;
     }

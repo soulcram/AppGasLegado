@@ -4,6 +4,8 @@ package br.com.m3Tech.appGasLegado;
 import br.com.m3Tech.appGasLegado.dto.ClienteDto;
 import br.com.m3Tech.appGasLegado.dto.ClienteEndereco;
 import br.com.m3Tech.appGasLegado.service.ClienteService;
+import br.com.m3Tech.utils.BooleanUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.AWTKeyStroke;
 import java.awt.Color;
@@ -18,6 +20,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.List;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -32,8 +35,11 @@ import javax.swing.table.DefaultTableModel;
 
 import static br.com.m3Tech.appGasLegado.ProgramaGas.salvarErro;
 
+@Slf4j
 public class TelaCliente extends JFrame {
     private JButton botaoAlterar;
+
+    private JButton consultarPorNome;
     private JButton botaoOK;
     private JTextField endTxt;
     private JLabel idTxt;
@@ -71,6 +77,7 @@ public class TelaCliente extends JFrame {
         this.endTxt = new JTextField();
         this.obsTxt = new JTextField();
         this.botaoAlterar = new JButton();
+        this.consultarPorNome = new JButton();
         this.jLabel5 = new JLabel();
         this.telefoneTxt = new JTextField();
         this.botaoOK = new JButton();
@@ -141,6 +148,19 @@ public class TelaCliente extends JFrame {
                 botaoAlterarActionPerformed(evt);
             }
         });
+
+        this.consultarPorNome.setBounds(350,40,180,20);
+        this.consultarPorNome.setVisible(BooleanUtils.defaultFalseIfNull(ProgramaGas.servico));
+        this.consultarPorNome.setFont(new Font("Tahoma", 1, 12));
+        this.consultarPorNome.setText("Consultar Por Nome");
+        this.consultarPorNome.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                botaoConsultarPorNomeActionPerformed(evt);
+            }
+        });
+
+
+
         this.jLabel5.setFont(new Font("Tahoma", 1, 14));
         this.jLabel5.setText("Telefone");
         this.telefoneTxt.setFont(new Font("Tahoma", 1, 14));
@@ -175,29 +195,39 @@ public class TelaCliente extends JFrame {
         this.getContentPane().setLayout(layout);
         layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(this.jPanel1, -1, -1, 32767).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(this.systemError, -2, 751, -2).addContainerGap(-1, 32767)));
         layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING).addGroup(layout.createSequentialGroup().addComponent(this.jPanel1, -2, -1, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.systemError, -2, 19, -2).addGap(0, 11, 32767)));
+
+        jPanel1.add(consultarPorNome);
+
         this.pack();
     }
 
     private void nomeTxtKeyPressed(KeyEvent evt) {
-//        String nome = this.nomeTxt.getText();
-//        String sql = "select * from Clientes  INNER JOIN ENDERECO ON ID_CEP = ID_ENDERECO where UPPER(NOME) LIKE '%" + nome.toUpperCase() + "%'";
-//        DefaultTableModel model = (DefaultTableModel)this.jTable1.getModel();
-//        model.setNumRows(0);
-//        if (!"".equals(nome)) {
-//            try {
-//                Conectar.pesquisar(sql);
-//
-//                while(Conectar.rs.next()) {
-//                    String[] conteudo = new String[]{Conectar.rs.getString("ID_CLIENTE"), Conectar.rs.getString("TELEFONE"), Conectar.rs.getString("NOME"), Conectar.rs.getString("LOGradouro"), Conectar.rs.getString("NUMERO")};
-//                    model.addRow(conteudo);
-//                }
-//            } catch (SQLException var6) {
-//                salvarErro(var6.getMessage() + "  Local:  " + var6.getLocalizedMessage());
-//                this.systemError.setText(var6.toString());
-//            }
-//        }
-//
-//        this.msgTabela.setText("Resultado da pesquisa pelo nome do cliente.");
+        if(BooleanUtils.defaultFalseIfNull(ProgramaGas.servico)){
+            this.endTxt.setText("");
+            this.telefoneTxt.setText("");
+            this.obsTxt.setText("");
+            this.telefoneTxt.setText("");
+            return;
+        }
+        String nome = this.nomeTxt.getText();
+        String sql = "select * from Clientes  INNER JOIN ENDERECO ON ID_CEP = ID_ENDERECO where UPPER(NOME) LIKE '%" + nome.toUpperCase() + "%'";
+        DefaultTableModel model = (DefaultTableModel)this.jTable1.getModel();
+        model.setNumRows(0);
+        if (!"".equals(nome)) {
+            try {
+                Conectar.pesquisar(sql);
+
+                while(Conectar.rs.next()) {
+                    String[] conteudo = new String[]{Conectar.rs.getString("ID_CLIENTE"), Conectar.rs.getString("TELEFONE"), Conectar.rs.getString("NOME"), Conectar.rs.getString("LOGradouro"), Conectar.rs.getString("NUMERO")};
+                    model.addRow(conteudo);
+                }
+            } catch (SQLException var6) {
+                salvarErro(var6.getMessage() + "  Local:  " + var6.getLocalizedMessage());
+                this.systemError.setText(var6.toString());
+            }
+        }
+
+        this.msgTabela.setText("Resultado da pesquisa pelo nome do cliente.");
     }
 
     private void endTxtKeyPressed(KeyEvent evt) {
@@ -288,6 +318,36 @@ public class TelaCliente extends JFrame {
         CadastrarNovoCliente cnc = new CadastrarNovoCliente();
         cnc.setVisible(true);
         cnc.preencher(lista);
+    }
+
+    private void botaoConsultarPorNomeActionPerformed(ActionEvent evt) {
+        if(BooleanUtils.defaultFalseIfNull(ProgramaGas.servico)) {
+
+
+            String nome = this.nomeTxt.getText() != null ? this.nomeTxt.getText().trim() : "";
+
+            List<ClienteDto> clientesByNome = new Service().getClientesByNome(nome);
+
+            DefaultTableModel model = (DefaultTableModel) this.jTable1.getModel();
+            model.setNumRows(0);
+
+            try {
+
+                for (ClienteDto cliente : clientesByNome) {
+
+                    ClienteEndereco clienteEndereco = cliente.getClienteEnderecos().get(0);
+
+                    String[] conteudo = new String[]{cliente.getIdCliente().toString(), cliente.getTelefone(), cliente.getNome(), clienteEndereco.getEndereco().getLogradouro(), clienteEndereco.getNumero()};
+                    model.addRow(conteudo);
+                }
+            } catch (Exception var6) {
+                log.error(var6.toString());
+            }
+
+
+            this.msgTabela.setText("Resultado da pesquisa pelo nome do cliente.");
+
+        }
     }
 
     private void telefoneTxtFocusLost(FocusEvent evt) {

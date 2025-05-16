@@ -1,6 +1,6 @@
 package br.com.m3Tech.appGasLegado;
 
-import programagas.*;
+import programagas.TelaProdutos;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -96,7 +96,7 @@ public class TelaMenu extends JFrame {
     }
 
     private void botaoClientesActionPerformed(ActionEvent evt) {
-        (new TelaCliente("1159295445")).setVisible(true);
+        (new TelaCliente("")).setVisible(true);
         this.dispose();
     }
 
@@ -106,12 +106,12 @@ public class TelaMenu extends JFrame {
     }
 
     private void jButton2ActionPerformed(ActionEvent evt) {
-        (new CadastroEndereço()).setVisible(true);
+        //(new CadastroEndereço()).setVisible(true);
         this.dispose();
     }
 
     private void jButton4ActionPerformed(ActionEvent evt) {
-        (new TelaFuncionarios()).setVisible(true);
+        //(new TelaFuncionarios()).setVisible(true);
         this.dispose();
     }
 
@@ -121,7 +121,7 @@ public class TelaMenu extends JFrame {
     }
 
     private void jButton3ActionPerformed(ActionEvent evt) {
-        (new TelaPedidosConsulta()).setVisible(true);
+       // (new TelaPedidosConsulta()).setVisible(true);
         this.dispose();
     }
 }
