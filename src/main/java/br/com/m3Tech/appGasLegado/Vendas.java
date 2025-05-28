@@ -4,8 +4,8 @@ import br.com.m3Tech.appGasLegado.dto.ClienteDto;
 import br.com.m3Tech.appGasLegado.dto.OpcoesDto;
 import br.com.m3Tech.appGasLegado.dto.PedidoServicoDto;
 import br.com.m3Tech.appGasLegado.service.ClienteService;
+import br.com.m3Tech.appGasLegado.utils.Mascaras;
 import br.com.m3Tech.utils.BooleanUtils;
-import programagas.Mascaras;
 import programagas.PintarTabela;
 
 import java.awt.Color;
@@ -70,6 +70,7 @@ public class Vendas extends JFrame {
         ProgramaGas.tabela1.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(this.statusCol));
         ProgramaGas.tabela1.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(this.formPag));
         Mascaras.mascaraTelefone(this.entradaTelTxt);
+        this.entradaTelTxt.setText("11");
         String sql = "Select * from Funcionarios";
 
         try {
