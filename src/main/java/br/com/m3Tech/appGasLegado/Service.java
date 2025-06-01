@@ -249,5 +249,54 @@ public class Service {
         return null;
     }
 
+    public List<EntregadorDisponivelDto> getEntregadores(Integer idPedido){
+        try {
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, new LocalDateDeserializer())
+                    .registerTypeAdapter(LocalTime.class, new LocalTimeDeserializer())
+                    .create();
+
+            ResponseEntity<String> responseEntity = new RequestApiClient(new RestTemplate(), HttpMethod.GET, ProgramaGas.urlService)
+                    .pathValue(ProgramaGas.contextoService)
+                    .pathValue("entregador")
+                    .pathValue("disponivel")
+                    .pathValue(idPedido.toString())
+                    .addHeader("Authorization", new AutorizationUtil().getAutorization())
+                    .addAcceptJson()
+                    .addContentTypeJson()
+                    .build()
+                    .enviar();
+
+            if (HttpStatus.OK.equals(responseEntity.getStatusCode())) {
+                Type listType = new TypeToken<List<EntregadorDisponivelDto>>() {}.getType();
+                return gson.fromJson(responseEntity.getBody(), listType);
+            }
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public void alterarEntregador(AlterarEntregadorDto alterarEntregadorDto){
+        try {
+
+            ResponseEntity<String> responseEntity = new RequestApiClient(new RestTemplate(), HttpMethod.PUT, ProgramaGas.urlService)
+                    .pathValue(ProgramaGas.contextoService)
+                    .pathValue("entregador")
+                    .pathValue("alterarEntregador")
+                    .bodyFromObject(alterarEntregadorDto)
+                    .addHeader("Authorization", new AutorizationUtil().getAutorization())
+                    .addAcceptJson()
+                    .addContentTypeJson()
+                    .build()
+                    .enviar();
+
+            System.out.println(responseEntity.getStatusCode());
+        }catch (Exception e){
+            System.err.println(e.getMessage());
+        }
+    }
+
 
 }

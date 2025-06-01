@@ -46,8 +46,6 @@ public class Vendas extends JFrame {
     public static String status = "";
     Metodos m = new Metodos();
     private JFormattedTextField entradaTelTxt;
-    private JComboBox<String> entregadorCol;
-    private JComboBox<String> formPag;
     private JButton jButton1;
     private JButton jButton2;
     private JButton jButton3;
@@ -59,31 +57,14 @@ public class Vendas extends JFrame {
     private JLabel lValidade;
     private static JLabel pedidosAbertosTxt;
     private static JLabel pedidosAbertosTxt1;
-    private JComboBox<String> statusCol;
     public static JLabel systemError;
 
 
     public Vendas() {
         this.initComponents();
         this.lValidade.setText("Licença valida até " + ProgramaGas.DataLimite);
-        ProgramaGas.tabela1.getColumnModel().getColumn(5).setCellEditor(new DefaultCellEditor(this.entregadorCol));
-        ProgramaGas.tabela1.getColumnModel().getColumn(6).setCellEditor(new DefaultCellEditor(this.statusCol));
-        ProgramaGas.tabela1.getColumnModel().getColumn(4).setCellEditor(new DefaultCellEditor(this.formPag));
         Mascaras.mascaraTelefone(this.entradaTelTxt);
         this.entradaTelTxt.setText("11");
-        String sql = "Select * from Funcionarios";
-
-        try {
-            Conectar.pesquisar(sql);
-
-            while(Conectar.rs.next()) {
-                this.entregadorCol.addItem(Conectar.rs.getString("NOME"));
-            }
-            Conectar.rs.close();
-        } catch (SQLException var4) {
-            ProgramaGas.salvarErro(var4.getMessage() + "  Local:  " + var4.getLocalizedMessage());
-            systemError.setText(var4.toString());
-        }
 
         try {
             (new Bina()).setVisible(true);
@@ -98,9 +79,14 @@ public class Vendas extends JFrame {
         int pedidoAbertos = 0;
 
         for(int i = 0; i < linhas; ++i) {
-            String valor = ProgramaGas.tabela1.getValueAt(i, 6).toString();
-            if ("Aberto".equals(valor)) {
+            Object valueAt = ProgramaGas.tabela1.getValueAt(i, 6);
+            if(valueAt == null){
                 ++pedidoAbertos;
+            }else {
+                String valor = valueAt.toString();
+                if (!"Finalizado".equals(valor)) {
+                    ++pedidoAbertos;
+                }
             }
         }
 
@@ -118,9 +104,6 @@ public class Vendas extends JFrame {
     }
 
     private void initComponents() {
-        this.statusCol = new JComboBox();
-        this.entregadorCol = new JComboBox();
-        this.formPag = new JComboBox();
         this.jPanel1 = new JPanel();
         this.jScrollPane1 = new JScrollPane();
         ProgramaGas.tabela1 = new JTable();
@@ -135,21 +118,6 @@ public class Vendas extends JFrame {
         pedidosAbertosTxt1 = new JLabel();
         systemError = new JLabel();
         this.lValidade = new JLabel();
-        this.statusCol.setEditable(true);
-        this.statusCol.setFont(new Font("Tahoma", 1, 12));
-        this.statusCol.setModel(new DefaultComboBoxModel(new String[]{"Aberto", "Finalizado", "Cancelado"}));
-        this.statusCol.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent evt) {
-                statusColItemStateChanged(evt);
-            }
-        });
-        this.statusCol.getAccessibleContext().setAccessibleParent(ProgramaGas.tabela1);
-        this.entregadorCol.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent evt) {
-                entregadorColItemStateChanged(evt);
-            }
-        });
-        this.formPag.setModel(new DefaultComboBoxModel(new String[]{"Troco não","QR CODE", "Visa", "Mastercard", "Troco 60,00","Troco 200,00", "Troco100,00", "Troco 70,00", "Troco 50,00", "Troco 10,00", "Troco 20,00", "Elo", "Mais", "Hipercard", "Outros", "Troco 9,00", "Troco 15,00"}));
         this.setDefaultCloseOperation(3);
         this.setTitle("Consigaz");
         this.setSize(new Dimension(1000, 1000));
@@ -268,18 +236,8 @@ public class Vendas extends JFrame {
                 systemError.setText(var5.toString());
             }
 
-            salvar();
         }
         this.entradaTelTxt.setText("");
-    }
-
-    private void statusColItemStateChanged(ItemEvent evt) {
-        TableCellRenderer renderer = new PintarTabela();
-
-        for(int c = 0; c < ProgramaGas.tabela1.getColumnCount(); ++c) {
-            ProgramaGas.tabela1.setDefaultRenderer(ProgramaGas.tabela1.getColumnClass(c), renderer);
-        }
-
     }
 
     private void entradaTelTxtFocusGained(FocusEvent evt) {
@@ -291,7 +249,6 @@ public class Vendas extends JFrame {
     }
 
     private void tabela1MouseClicked(MouseEvent evt) {
-        salvar();
         if (evt.getClickCount() == 2) {
             OpcoesDto opcoesDto = new OpcoesDto();
             opcoesDto.setIdPedido(Integer.valueOf(ProgramaGas.tabela1.getValueAt(ProgramaGas.tabela1.getSelectedRow(), 8).toString()));
@@ -313,7 +270,7 @@ public class Vendas extends JFrame {
             for(PedidoServicoDto pedidoServicoDto : allPedidos){
                 String endereco = pedidoServicoDto.getLogradouro() + ", " + pedidoServicoDto.getNumeroResidencia() + " - " + pedidoServicoDto.getBairro() + "    Prox: " + pedidoServicoDto.getComplemento();
 
-                String[] conteudo = new String[]{pedidoServicoDto.getPedido(), pedidoServicoDto.getNomeCliente(), pedidoServicoDto.getTelefoneCliente(), endereco, pedidoServicoDto.getFormaPagamento(), "Funcionário", "Status", pedidoServicoDto.getHora(), pedidoServicoDto.getIdPedido().toString()};
+                String[] conteudo = new String[]{pedidoServicoDto.getPedido(), pedidoServicoDto.getNomeCliente(), pedidoServicoDto.getTelefoneCliente(), endereco, pedidoServicoDto.getFormaPagamento(), pedidoServicoDto.getEntregador(), pedidoServicoDto.getStatus(), pedidoServicoDto.getHora(), pedidoServicoDto.getIdPedido().toString()};
                 model.addRow(conteudo);
             }
 
@@ -344,49 +301,16 @@ public class Vendas extends JFrame {
                 systemError.setText(var10.toString());
             }
         }
+        pedidosAberto();
 
-    }
-
-    private void entregadorColItemStateChanged(ItemEvent evt) {
     }
 
     private void jButton3ActionPerformed(ActionEvent evt) {
         if (ProgramaGas.tabela1.getRowCount() > 0) {
-            salvar();
             pedidosAberto();
         }
 
     }
 
-    public static void main(String[] args) {
-        EventQueue.invokeLater(() -> {
-            Toolkit tk = Toolkit.getDefaultToolkit();
-            Dimension d = tk.getScreenSize();
-            Conectar.startBd();
-            programagas.Vendas tela = new programagas.Vendas();
-            tela.setSize(d.width, d.height);
-            tela.setVisible(true);
-        });
-    }
 
-    public static void salvar() {
-        int linhas = ProgramaGas.tabela1.getRowCount();
-        if (linhas > 0) {
-            for(int i = 0; i < linhas; ++i) {
-                String id = ProgramaGas.tabela1.getValueAt(i, 8).toString();
-                String entregador = ProgramaGas.tabela1.getValueAt(i, 5).toString();
-                String Status = ProgramaGas.tabela1.getValueAt(i, 6).toString();
-                String fdp = ProgramaGas.tabela1.getValueAt(i, 4).toString();
-                String sql = "update PEDIDOS set status = '" + Status + "', entregador = '" + entregador + "',formadepagamento = '" + fdp + "' where id_pedido = " + id + " ";
-
-                try {
-                    Conectar.alterar(sql);
-                } catch (SQLException var8) {
-                    ProgramaGas.salvarErro(var8.getMessage() + "  Local:  " + var8.getLocalizedMessage());
-                    systemError.setText(var8.toString());
-                }
-            }
-        }
-
-    }
 }

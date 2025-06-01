@@ -30,6 +30,7 @@ public class ProgramaGas {
     public static String contextoService;
     public static String urlService;
     public static Boolean servico;
+    public static Boolean atualizarTabelaPedidos;
 
     public static JTable tabela1;
 

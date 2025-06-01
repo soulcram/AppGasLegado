@@ -27,6 +27,7 @@ public class TelaOpcoes extends JFrame {
     private JButton botaoEditarCliente;
     private JButton botaoReimprimir;
     private JButton botaoEnviarParaLoja;
+    private JButton botaoEnviarParaEntregador;
     private JPanel jPanel1;
 
 
@@ -88,6 +89,18 @@ public class TelaOpcoes extends JFrame {
             }
         });
 
+        this.botaoEnviarParaEntregador = new JButton();
+        this.botaoEnviarParaEntregador.setBackground(new Color(0, 163, 253));
+        this.botaoEnviarParaEntregador.setFont(new Font("Tahoma", 1, 12));
+        this.botaoEnviarParaEntregador.setText("Enviar para Entregador");
+        this.botaoEnviarParaEntregador.setBounds(10,160,200,30);
+        this.botaoEnviarParaEntregador.setVisible(true);
+        this.botaoEnviarParaEntregador.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                botaoEnviarParaEntregadorActionPerformed(evt);
+            }
+        });
+
 
 
 
@@ -98,6 +111,7 @@ public class TelaOpcoes extends JFrame {
         jPanel1.add(botaoEditarCliente);
         jPanel1.add(botaoReimprimir);
         jPanel1.add(botaoEnviarParaLoja);
+        jPanel1.add(botaoEnviarParaEntregador);
 
         this.setBounds(10, 10, 300, 300);
         this.setLayout(null);
@@ -130,6 +144,12 @@ public class TelaOpcoes extends JFrame {
     private void botaoEnviarParaLojaActionPerformed(ActionEvent evt) {
 
         (new TelaEnviarParaLoja(idPedido)).setVisible(true);
+        this.dispose();
+    }
+
+    private void botaoEnviarParaEntregadorActionPerformed(ActionEvent evt) {
+
+        (new TelaEnviarParaEntregador(idPedido)).setVisible(true);
         this.dispose();
     }
 
