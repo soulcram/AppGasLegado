@@ -59,7 +59,7 @@ public class TelaEnviarParaEntregador extends JFrame {
 
         this.boxEntregadores = new JComboBox();
         this.boxEntregadores.setBorder((Border)null);
-        this.boxEntregadores.setBounds(180,10,350,30);
+        this.boxEntregadores.setBounds(10,50,650,30);
 
 
         this.bEnviar.setText("Enviar");
@@ -70,7 +70,7 @@ public class TelaEnviarParaEntregador extends JFrame {
             }
         });
 
-        jPanel1.setBounds(10,10,620,400);
+        jPanel1.setBounds(10,10,820,400);
         jPanel1.setLayout(null);
         jPanel1.setBackground(Color.WHITE);
 
@@ -79,7 +79,7 @@ public class TelaEnviarParaEntregador extends JFrame {
 
         jPanel1.add(bEnviar);
 
-        this.setBounds(10, 10, 630, 400);
+        this.setBounds(10, 10, 830, 400);
         this.setLayout(null);
         this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.add(jPanel1);

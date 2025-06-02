@@ -462,6 +462,7 @@ public class TelaPedidos extends JFrame {
 
                 ImpressoraUtils.reimprimir(dadosImpressaoDto);
             }
+            Vendas.entradaTelTxt.setText("11");
             Vendas.AddLinhaTabela(pedido, this.nome, end, fDp, this.telefone, this.id_pedido);
             this.dispose();
             Vendas.pedidosAberto();

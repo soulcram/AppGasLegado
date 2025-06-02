@@ -45,7 +45,7 @@ import javax.swing.table.TableCellRenderer;
 public class Vendas extends JFrame {
     public static String status = "";
     Metodos m = new Metodos();
-    private JFormattedTextField entradaTelTxt;
+    public static JFormattedTextField entradaTelTxt;
     private JButton jButton1;
     private JButton jButton2;
     private JButton jButton3;
