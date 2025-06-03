@@ -64,7 +64,7 @@ public class Vendas extends JFrame {
         this.initComponents();
         this.lValidade.setText("Licença valida até " + ProgramaGas.DataLimite);
         Mascaras.mascaraTelefone(this.entradaTelTxt);
-        this.entradaTelTxt.setText("11");
+        //this.entradaTelTxt.setText("11");
 
         try {
             (new Bina()).setVisible(true);

@@ -52,9 +52,6 @@ public class ImpressoraUtils {
         nota = nota + "                                " + System.getProperty("line.separator") ;
         nota = nota + "                                " + System.getProperty("line.separator") ;
         nota = nota + "                                " + System.getProperty("line.separator") ;
-        nota = nota + "                                " + System.getProperty("line.separator") ;
-        nota = nota + "                                " + System.getProperty("line.separator") ;
-        nota = nota + "                                " + System.getProperty("line.separator") ;
 
         return nota;
     }
@@ -110,7 +107,7 @@ public class ImpressoraUtils {
 
 
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-            outputStream.write((textoNota + '\u001b' + 'w').getBytes("CP437"));
+            outputStream.write((textoNota).getBytes("CP437"));
             outputStream.write(tentantivaCorte1);
             outputStream.write(tentantivaCorte2);
 

@@ -27,7 +27,7 @@ public class Mascaras {
 
     public static void mascaraTelefone(JFormattedTextField jtf) {
         try {
-            MaskFormatter formatoDois = new MaskFormatter("(**)*********");
+            MaskFormatter formatoDois = new MaskFormatter("(11)*********");
             formatoDois.setValidCharacters("0123456789");
             formatoDois.install(jtf);
         } catch (ParseException var3) {
