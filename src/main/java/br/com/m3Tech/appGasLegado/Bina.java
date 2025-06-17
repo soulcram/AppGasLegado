@@ -432,8 +432,11 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
         try {
 
             Service service = new Service();
+            ClienteDto cliente = null;
 
-            ClienteDto cliente = service.getCliente(telefone);
+            if (ProgramaGas.servico) {
+                cliente = service.getCliente(telefone);
+            }
 
             if(cliente != null && cliente.getClienteEnderecos() != null && !cliente.getClienteEnderecos().isEmpty()){
                 cliente.setViaApi(true);

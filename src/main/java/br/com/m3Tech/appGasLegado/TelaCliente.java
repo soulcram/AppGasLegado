@@ -423,7 +423,12 @@ public class TelaCliente extends JFrame {
 //            salvarErro(var17.getMessage() + "  Local:  " + var17.getLocalizedMessage());
 //            this.systemError.setText(var17.toString());
 //        }
-        ClienteDto cliente = new Service().getCliente(telefone);
+
+        ClienteDto cliente = null;
+
+        if(ProgramaGas.servico){
+            cliente = new Service().getCliente(telefone);
+        }
 
         if(cliente != null && cliente.getClienteEnderecos() != null && !cliente.getClienteEnderecos().isEmpty()){
 

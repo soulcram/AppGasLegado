@@ -209,7 +209,11 @@ public class Vendas extends JFrame {
     private void VK_enter(ActionEvent evt) {
         String numeroTelefoneVerificado = this.m.numero(this.entradaTelTxt.getText());
 
-        ClienteDto cliente = new Service().getCliente(numeroTelefoneVerificado);
+        ClienteDto cliente = null;
+
+        if(ProgramaGas.servico) {
+            cliente = new Service().getCliente(numeroTelefoneVerificado);
+        }
 
         if(cliente != null && cliente.getClienteEnderecos() != null && !cliente.getClienteEnderecos().isEmpty()){
             cliente.setViaApi(true);

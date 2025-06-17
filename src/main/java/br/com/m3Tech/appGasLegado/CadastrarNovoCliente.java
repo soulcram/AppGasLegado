@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import programagas.Mascaras;
 import programagas.Metodos;
-import programagas.ProgramaGas;
 
 import java.awt.AWTKeyStroke;
 import java.awt.Color;
@@ -485,8 +484,9 @@ public class CadastrarNovoCliente extends JFrame {
             clienteLegadoDto.setTelefoneCliente(telefone);
             clienteLegadoDto.setNumeroResidencia(numero);
 
-            new Service().salvarCliente(clienteLegadoDto);
-
+            if(ProgramaGas.servico) {
+                new Service().salvarCliente(clienteLegadoDto);
+            }
 
             ClienteDto cliente = new ClienteDto();
             cliente.setIdCliente(novoIdCliente);
@@ -502,7 +502,6 @@ public class CadastrarNovoCliente extends JFrame {
             endereco.setCep(this.cepTxt.getText());
             endereco.setCidade(this.cidadeTxt.getText());
             endereco.setLogradouro(this.logradouroTxt.getText());
-
 
             ClienteEndereco end = new ClienteEndereco();
             end.setApelido("Principal");

@@ -82,7 +82,7 @@ public class TelaOpcoes extends JFrame {
         this.botaoEnviarParaLoja.setFont(new Font("Tahoma", 1, 12));
         this.botaoEnviarParaLoja.setText("Enviar para Loja");
         this.botaoEnviarParaLoja.setBounds(10,110,200,30);
-        this.botaoEnviarParaLoja.setVisible(true);
+        this.botaoEnviarParaLoja.setVisible(ProgramaGas.servico);
         this.botaoEnviarParaLoja.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 botaoEnviarParaLojaActionPerformed(evt);
@@ -94,7 +94,7 @@ public class TelaOpcoes extends JFrame {
         this.botaoEnviarParaEntregador.setFont(new Font("Tahoma", 1, 12));
         this.botaoEnviarParaEntregador.setText("Enviar para Entregador");
         this.botaoEnviarParaEntregador.setBounds(10,160,200,30);
-        this.botaoEnviarParaEntregador.setVisible(true);
+        this.botaoEnviarParaEntregador.setVisible(ProgramaGas.servico);
         this.botaoEnviarParaEntregador.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 botaoEnviarParaEntregadorActionPerformed(evt);
