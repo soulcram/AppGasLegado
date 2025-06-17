@@ -30,6 +30,11 @@ public class ImpressoraUtils {
         String hoje = dateFormat.format(date);
         String hora = dateFormatHora.format(date);
         String nota = "";
+
+        if(!StringUtils.emptyOrNull(dadosImpressaoDto.getLojaOriginal())){
+            nota = nota + "Enviado por: " + dadosImpressaoDto.getLojaOriginal() + System.getProperty("line.separator");
+        }
+
         nota = nota + "\u001bE       CONSIGAZ\u001bF" + System.getProperty("line.separator");
         nota = nota + "--------------------------------" + System.getProperty("line.separator");
         nota = nota + hoje + "    " + hora + System.getProperty("line.separator");

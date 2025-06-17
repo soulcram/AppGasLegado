@@ -19,6 +19,7 @@ public class DadosImpressaoDto {
     private String pedido;
     private String total;
     private String formaPagamento;
+    private String lojaOriginal;
 
     public DadosImpressaoDto(PedidoServicoDto pedido){
         this.telefone = pedido.getTelefoneCliente();
@@ -31,5 +32,6 @@ public class DadosImpressaoDto {
         this.pedido = pedido.getPedido();
         this.total = pedido.getValorTotal() != null ? pedido.getValorTotal().toString() : "";
         this.formaPagamento = pedido.getFormaPagamento();
+        this.lojaOriginal = pedido.getLojaOriginal();
     }
 }
