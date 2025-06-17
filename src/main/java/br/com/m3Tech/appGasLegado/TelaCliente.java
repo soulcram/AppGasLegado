@@ -3,6 +3,7 @@ package br.com.m3Tech.appGasLegado;
 
 import br.com.m3Tech.appGasLegado.dto.ClienteDto;
 import br.com.m3Tech.appGasLegado.dto.ClienteEndereco;
+import br.com.m3Tech.appGasLegado.dto.PedidoLegadoSimplesDto;
 import br.com.m3Tech.appGasLegado.service.ClienteService;
 import br.com.m3Tech.utils.BooleanUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -362,8 +363,8 @@ public class TelaCliente extends JFrame {
 
     private void preencher(String telefone) {
 
-        DefaultTableModel model = (DefaultTableModel)this.jTable1.getModel();
-        model.setNumRows(0);
+//        DefaultTableModel model = (DefaultTableModel)this.jTable1.getModel();
+//        model.setNumRows(0);
         String id_cliente = null;
         String nome = null;
         String id_endereco = null;
@@ -374,54 +375,54 @@ public class TelaCliente extends JFrame {
         String tp_logradouro = null;
         String referencia = null;
 
-        String sql = "SELECT * FROM CLIENTES where telefone =  '" + telefone + "'";
-        try {
-            Conectar.pesquisar(sql);
-
-            while(Conectar.rs.next()) {
-                id_cliente = Conectar.rs.getString("ID_CLIENTE");
-                nome = Conectar.rs.getString("NOME");
-                id_endereco = Conectar.rs.getString("ID_ENDERECO");
-                numCasa = Conectar.rs.getString("NUMERO");
-                obs = Conectar.rs.getString("OBSERVACAO");
-            }
-            Conectar.rs.close();
-        } catch (SQLException var19) {
-            salvarErro(var19.getMessage() + "  Local:  " + var19.getLocalizedMessage());
-            this.systemError.setText(var19.toString());
-        }
-
-        String sql1 = "SELECT * FROM ENDERECO where ID_CEP =  " + id_endereco + "";
-
-        try {
-            Conectar.pesquisar(sql1);
-
-            while(Conectar.rs.next()) {
-                logradouro = Conectar.rs.getString("LOGRADOURO");
-                bairro = Conectar.rs.getString("BAIRRO");
-                tp_logradouro = Conectar.rs.getString("TP_LOGRADOURO");
-                referencia = Conectar.rs.getString("REFERENCIA");
-            }
-            Conectar.rs.close();
-        } catch (SQLException var18) {
-            salvarErro(var18.getMessage() + "  Local:  " + var18.getLocalizedMessage());
-            this.systemError.setText(var18.toString());
-        }
-
-        String sql2 = "SELECT * FROM PEDIDOS where ID_CLIENTEp =  " + id_cliente + "";
-
-        try {
-            Conectar.pesquisar(sql2);
-
-            for(int i = 1; Conectar.rs.next(); ++i) {
-                String[] conteudo = new String[]{Integer.toString(i), Conectar.rs.getString("Pedido"), Conectar.rs.getString("ENTREGADOR"), Conectar.rs.getString("FORMADEPAGAMENTO"), Conectar.rs.getString("STATUS"), Conectar.rs.getString("DIA")};
-                model.addRow(conteudo);
-            }
-            Conectar.rs.close();
-        } catch (SQLException var17) {
-            salvarErro(var17.getMessage() + "  Local:  " + var17.getLocalizedMessage());
-            this.systemError.setText(var17.toString());
-        }
+//        String sql = "SELECT * FROM CLIENTES where telefone =  '" + telefone + "'";
+//        try {
+//            Conectar.pesquisar(sql);
+//
+//            while(Conectar.rs.next()) {
+//                id_cliente = Conectar.rs.getString("ID_CLIENTE");
+//                nome = Conectar.rs.getString("NOME");
+//                id_endereco = Conectar.rs.getString("ID_ENDERECO");
+//                numCasa = Conectar.rs.getString("NUMERO");
+//                obs = Conectar.rs.getString("OBSERVACAO");
+//            }
+//            Conectar.rs.close();
+//        } catch (SQLException var19) {
+//            salvarErro(var19.getMessage() + "  Local:  " + var19.getLocalizedMessage());
+//            this.systemError.setText(var19.toString());
+//        }
+//
+//        String sql1 = "SELECT * FROM ENDERECO where ID_CEP =  " + id_endereco + "";
+//
+//        try {
+//            Conectar.pesquisar(sql1);
+//
+//            while(Conectar.rs.next()) {
+//                logradouro = Conectar.rs.getString("LOGRADOURO");
+//                bairro = Conectar.rs.getString("BAIRRO");
+//                tp_logradouro = Conectar.rs.getString("TP_LOGRADOURO");
+//                referencia = Conectar.rs.getString("REFERENCIA");
+//            }
+//            Conectar.rs.close();
+//        } catch (SQLException var18) {
+//            salvarErro(var18.getMessage() + "  Local:  " + var18.getLocalizedMessage());
+//            this.systemError.setText(var18.toString());
+//        }
+//
+//        String sql2 = "SELECT * FROM PEDIDOS where ID_CLIENTEp =  " + id_cliente + "";
+//
+//        try {
+//            Conectar.pesquisar(sql2);
+//
+//            for(int i = 1; Conectar.rs.next(); ++i) {
+//                String[] conteudo = new String[]{Integer.toString(i), Conectar.rs.getString("Pedido"), Conectar.rs.getString("ENTREGADOR"), Conectar.rs.getString("FORMADEPAGAMENTO"), Conectar.rs.getString("STATUS"), Conectar.rs.getString("DIA")};
+//                model.addRow(conteudo);
+//            }
+//            Conectar.rs.close();
+//        } catch (SQLException var17) {
+//            salvarErro(var17.getMessage() + "  Local:  " + var17.getLocalizedMessage());
+//            this.systemError.setText(var17.toString());
+//        }
         ClienteDto cliente = new Service().getCliente(telefone);
 
         if(cliente != null && cliente.getClienteEnderecos() != null && !cliente.getClienteEnderecos().isEmpty()){
@@ -435,6 +436,34 @@ public class TelaCliente extends JFrame {
             bairro = clienteEndereco.getEndereco().getBairro();
             tp_logradouro = "Rua";
         }
+
+        if(cliente != null && cliente.getUltimosPedidos() != null) {
+            try {
+                DefaultTableModel model = (DefaultTableModel)this.jTable1.getModel();
+                model.setNumRows(0);
+
+                for (PedidoLegadoSimplesDto pedidoDto : cliente.getUltimosPedidos()) {
+                    //ordem das colunas "Data", "Pedido", "Valor", "Loja", "Forma de Pagamento", "Entregador", "Status"
+                    String[] conteudo = new String[]{
+                            pedidoDto.getData() == null ? "" : pedidoDto.getData().toString(),
+                            pedidoDto.getPedido(),
+                            pedidoDto.getValorTotal() == null ? "" : pedidoDto.getValorTotal().toString(),
+                            pedidoDto.getLojaOriginal() != null ? pedidoDto.getLoja() + " - " + pedidoDto.getLojaOriginal() : pedidoDto.getLoja(),
+                            pedidoDto.getFormaPagamento()
+//                            pedidoDto.getEntregador(),
+//                            pedidoDto.getStatus()
+                    };
+
+                    model.addRow(conteudo);
+                }
+
+            } catch (Exception var7) {
+                ProgramaGas.salvarErro(var7.getMessage() + "  Local:  " + var7.getLocalizedMessage());
+                this.systemError.setText(var7.toString());
+            }
+        }
+
+
 
         this.telefoneTxt.setText(telefone);
         this.idTxt.setText(id_cliente);
