@@ -2,6 +2,7 @@ package br.com.m3Tech.appGasLegado;
 
 import br.com.m3Tech.appGasLegado.dto.*;
 import br.com.m3Tech.appGasLegado.utils.ImpressoraUtils;
+import br.com.m3Tech.appGasLegado.utils.PedidosUtils;
 import br.com.m3Tech.utils.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
@@ -121,38 +122,32 @@ public class TelaPedidos extends JFrame {
             ClienteEndereco clienteEndereco = cliente.getClienteEnderecos().get(0);
 
             this.telefoneTxt.setText(cliente.getTelefone());
+            this.id_cliente = String.valueOf(cliente.getIdCliente());
 
+            if(cliente.getUltimosPedidos() != null) {
+                try {
+                    DefaultTableModel model = (DefaultTableModel) this.jTable1.getModel();
 
-            String sql = "SELECT ID_CLIENTE FROM CLIENTES where telefone =  '" + cliente.getTelefone() + "'";
+                    for (PedidoLegadoSimplesDto pedidoDto : cliente.getUltimosPedidos()) {
+                        //ordem das colunas "Data", "Pedido", "Valor", "Loja", "Forma de Pagamento", "Entregador", "Status"
+                        String[] conteudo = new String[]{
+                                pedidoDto.getData() == null ? "" : pedidoDto.getData().toString(),
+                                pedidoDto.getPedido(),
+                                pedidoDto.getValorTotal() == null ? "" : pedidoDto.getValorTotal().toString(),
+                                pedidoDto.getLojaOriginal() != null ? pedidoDto.getLoja() + " - " + pedidoDto.getLojaOriginal() : pedidoDto.getLoja(),
+                                pedidoDto.getFormaPagamento(),
+                                pedidoDto.getEntregador(),
+                                pedidoDto.getStatus()
+                        };
 
-            try {
-                Conectar.pesquisar(sql);
+                        model.addRow(conteudo);
+                    }
 
-                while (Conectar.rs.next()) {
-                    this.id_cliente = Conectar.rs.getString("ID_CLIENTE");
+                } catch (Exception var7) {
+                    ProgramaGas.salvarErro(var7.getMessage() + "  Local:  " + var7.getLocalizedMessage());
+                    this.systemError.setText(var7.toString());
                 }
-                Conectar.rs.close();
-            } catch (SQLException var9) {
-                ProgramaGas.salvarErro(var9.getMessage() + "  Local:  " + var9.getLocalizedMessage());
-                this.systemError.setText(var9.toString());
             }
-
-            String sql2 = "SELECT * FROM PEDIDOS where ID_CLIENTEp =  " + this.id_cliente + "";
-
-            try {
-                Conectar.pesquisar(sql2);
-                DefaultTableModel model = (DefaultTableModel) this.jTable1.getModel();
-
-                while (Conectar.rs.next()) {
-                    String[] conteudo = new String[]{Conectar.rs.getString("PEDIDO"), Conectar.rs.getString("formadepagamento"), Conectar.rs.getString("ENTREGADOR"), Conectar.rs.getString("STATUS"), Conectar.rs.getString("DIA")};
-                    model.addRow(conteudo);
-                }
-                Conectar.rs.close();
-            } catch (SQLException var7) {
-                ProgramaGas.salvarErro(var7.getMessage() + "  Local:  " + var7.getLocalizedMessage());
-                this.systemError.setText(var7.toString());
-            }
-
             this.idTxt.setText(this.id_cliente);
             this.nomeTxt.setText(cliente.getNome());
             this.endTxt.setText( clienteEndereco.getEndereco().getLogradouro() + ", " + clienteEndereco.getNumero() + " - " + clienteEndereco.getEndereco().getBairro());
@@ -274,9 +269,9 @@ public class TelaPedidos extends JFrame {
         this.imprimirCheckBox.setBounds(795,80,190,30);
 
         this.jScrollPane1.setBorder(BorderFactory.createTitledBorder("Ultimos Pedidos"));
-        this.jTable1.setModel(new DefaultTableModel(new Object[0][], new String[]{"Pedido", "Forma de Pagamento", "Entregador", "Status", "Data"}) {
-            Class[] types = new Class[]{String.class, String.class, String.class, String.class, String.class};
-            boolean[] canEdit = new boolean[]{false, false, false, false, false};
+        this.jTable1.setModel(new DefaultTableModel(new Object[0][], new String[]{ "Data", "Pedido", "Valor", "Loja", "Forma de Pagamento", "Entregador", "Status"}) {
+            Class[] types = new Class[]{String.class, String.class, String.class, String.class, String.class, String.class, String.class};
+            boolean[] canEdit = new boolean[]{false, false, false, false, false, false, false};
 
             public Class getColumnClass(int columnIndex) {
                 return this.types[columnIndex];
@@ -289,12 +284,14 @@ public class TelaPedidos extends JFrame {
         this.jTable1.setAutoResizeMode(0);
         this.jScrollPane1.setViewportView(this.jTable1);
         if (this.jTable1.getColumnModel().getColumnCount() > 0) {
-            this.jTable1.getColumnModel().getColumn(0).setPreferredWidth(300);
-            this.jTable1.getColumnModel().getColumn(1).setPreferredWidth(200);
-            this.jTable1.getColumnModel().getColumn(2).setPreferredWidth(150);
-            this.jTable1.getColumnModel().getColumn(3).setPreferredWidth(150);
+            this.jTable1.getColumnModel().getColumn(0).setPreferredWidth(90);
+            this.jTable1.getColumnModel().getColumn(1).setPreferredWidth(230);
+            this.jTable1.getColumnModel().getColumn(2).setPreferredWidth(90);
+            this.jTable1.getColumnModel().getColumn(3).setPreferredWidth(230);
             this.jTable1.getColumnModel().getColumn(4).setPreferredWidth(125);
-            this.jTable1.getColumnModel().getColumn(4).setMaxWidth(150);
+            this.jTable1.getColumnModel().getColumn(5).setPreferredWidth(90);
+            this.jTable1.getColumnModel().getColumn(6).setPreferredWidth(90);
+            this.jTable1.getColumnModel().getColumn(6).setMaxWidth(150);
         }
 
         this.obsTxt.setFont(new Font("Tahoma", 1, 14));

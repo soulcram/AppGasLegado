@@ -12,5 +12,6 @@ public class ClienteDto {
     private String telefone;
     private String observacao;
     private List<ClienteEndereco> clienteEnderecos;
+    private List<PedidoLegadoSimplesDto> ultimosPedidos;
     private Boolean viaApi;
 }

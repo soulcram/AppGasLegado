@@ -22,6 +22,7 @@ public class PedidoDto {
     private BigDecimal troco;
     private String observacao;
     private String loja;
+    private String lojaOriginal;
 
     List<PedidoProdutoDto> produtos;
 }
