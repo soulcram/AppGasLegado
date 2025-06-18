@@ -210,7 +210,7 @@ public class TelaPedidos extends JFrame {
                 DefaultTableModel model = (DefaultTableModel) this.jTable1.getModel();
 
                 while (Conectar.rs.next()) {
-                    String[] conteudo = new String[]{Conectar.rs.getString("PEDIDO"), Conectar.rs.getString("formadepagamento"), Conectar.rs.getString("ENTREGADOR"), Conectar.rs.getString("STATUS"), Conectar.rs.getString("DIA")};
+                    String[] conteudo = new String[]{Conectar.rs.getString("DIA"), Conectar.rs.getString("PEDIDO"), Conectar.rs.getString("VALOR") ,"", Conectar.rs.getString("formadepagamento"), Conectar.rs.getString("ENTREGADOR"), Conectar.rs.getString("STATUS") };
                     model.addRow(conteudo);
                 }
                 Conectar.rs.close();
