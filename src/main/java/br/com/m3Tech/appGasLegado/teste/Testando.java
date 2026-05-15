@@ -1,6 +1,9 @@
 package br.com.m3Tech.appGasLegado.teste;
 
+import br.com.m3Tech.appGasLegado.CadastrarNovoCliente;
 import br.com.m3Tech.appGasLegado.Conectar;
+import br.com.m3Tech.appGasLegado.TelaPedidos;
+import br.com.m3Tech.appGasLegado.dto.ClienteDto;
 import br.com.m3Tech.appGasLegado.utils.AtualizarBanco;
 
 import java.awt.*;
@@ -24,23 +27,51 @@ public class Testando {
 
         String sqlPedido = "select  * from pedidos as p INNER JOIN CLIENTES as c ON ID_CLIENTE = ID_CLIENTEp INNER JOIN ENDERECO ON ID_CEP = ID_ENDERECO where ID_PEDIDO = " + 234173;
 
+
+        String encontrarCliente = "SELECT * FROM CLIENTES where telefone =  '11930082137'";
+
+        String encontrarPedidoCliente = "SELECT * FROM PEDIDOS where ID_CLIENTEp = 92428 ";
+
 //        Conectar.alterar(inserindoColuna);
 
 //          AtualizarBanco.atualizar();
-        ResultSet rs = Conectar.pesquisar(exibirColunas);
+        ResultSet rs = Conectar.pesquisar(encontrarPedidoCliente);
        if(rs == null){
            System.out.println("Result Set nulo.");
            return;
        }
        while(rs.next()){
 //           System.out.println(rs.getString("TABLENAME"));
-           System.out.println(rs.getString("COLUMNNAME"));
-           System.out.println(rs.getString("COLUMNNUMBER"));
-           System.out.println(rs.getString("COLUMNDATATYPE"));
+//          System.out.println(rs.getString("COLUMNNAME"));
+//           System.out.println(rs.getString("COLUMNNUMBER"));
+//           System.out.println(rs.getString("COLUMNDATATYPE"));
 //           System.out.println(rs.getString("TEL_INI"));
 //           System.out.println(rs.getString("TEL_FIM"));
 
 //           System.out.println(rs.getString("REFERENCIA"));
+
+           //TB CLIENTES
+//           System.out.println(
+//                   "\n==============================\n" +
+//                           "ID_CLIENTE : " + rs.getString("ID_CLIENTE") + "\n" +
+//                           "ID_ENDERECO: " + rs.getString("ID_ENDERECO") + "\n" +
+//                           "NOME        : " + rs.getString("NOME") + "\n" +
+//                           "NUMERO      : " + rs.getString("NUMERO") + "\n" +
+//                           "OBSERVACAO  : " + rs.getString("OBSERVACAO") + "\n" +
+//                           "TELEFONE    : " + rs.getString("TELEFONE") + "\n" +
+//                           "=============================="
+//           );
+
+           //TB PEDIDOS
+           System.out.println(
+                   "\n==============================\n" +
+                           "ID_CLIENTEP : " + rs.getString("ID_CLIENTEP") + "\n" +
+                           "ID_PEDIDO   : " + rs.getString("ID_PEDIDO") + "\n" +
+                           "OBSERVACAO : " + rs.getString("OBSERVACAO") + "\n" +
+                           "PEDIDO      : " + rs.getString("PEDIDO") + "\n" +
+                           "STATUS      : " + rs.getString("STATUS") + "\n" +
+                           "=============================="
+           );
            System.out.println();
        }
     }

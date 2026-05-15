@@ -25,28 +25,30 @@ public class Conectar {
     public static ResultSet pesquisar(String sql) throws SQLException {
         try {
             Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
-            Connection con = DriverManager.getConnection("jdbc:derby:C:\\BancoDeDados\\ProgramaGas", "soulcram", "p4r4tud0");
+            Connection con = DriverManager.getConnection(url, usuario, senha);
             Statement stm = con.createStatement();
             rs = stm.executeQuery(sql);
             return rs;
-        } catch (Exception var3) {
-            log.error(var3.getMessage() + "  Local:  " + var3.getLocalizedMessage());
+        } catch (SQLException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error(e.getMessage() + "  Local:  " + e.getLocalizedMessage());
+            throw new SQLException("Erro ao conectar ao banco de dados: " + e.getMessage(), e);
         }
-        return null;
     }
 
     public static void alterar(String sql) throws SQLException {
         try {
             Class.forName("org.apache.derby.jdbc.ClientDriver").newInstance();
-            Connection con = DriverManager.getConnection("jdbc:derby:C:\\BancoDeDados\\ProgramaGas", "soulcram", "p4r4tud0");
+            Connection con = DriverManager.getConnection(url, usuario, senha);
             Statement stm = con.createStatement();
             stm.executeUpdate(sql);
             stm.close();
             con.close();
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException var3) {
-            log.error(var3.getMessage() + "  Local:  " + var3.getLocalizedMessage());
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+            log.error(e.getMessage() + "  Local:  " + e.getLocalizedMessage());
+            throw new SQLException("Erro ao conectar ao banco de dados: " + e.getMessage(), e);
         }
-
     }
 
     public static void startBd() {

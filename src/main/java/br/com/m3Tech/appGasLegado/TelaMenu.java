@@ -1,5 +1,6 @@
 package br.com.m3Tech.appGasLegado;
 
+import programagas.TelaPedidosConsulta;
 import programagas.TelaProdutos;
 
 import java.awt.Color;
@@ -121,7 +122,7 @@ public class TelaMenu extends JFrame {
     }
 
     private void jButton3ActionPerformed(ActionEvent evt) {
-       // (new TelaPedidosConsulta()).setVisible(true);
+        (new TelaPedidosConsulta()).setVisible(true);
         this.dispose();
     }
 }

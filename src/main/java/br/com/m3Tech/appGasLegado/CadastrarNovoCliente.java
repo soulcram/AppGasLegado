@@ -422,6 +422,24 @@ public class CadastrarNovoCliente extends JFrame {
         BotaoCadNovoEnd.setVisible(false);
     }
 
+    private Integer buscarIdClientePorTelefone(String telefone) {
+        try {
+            Conectar.pesquisar("SELECT ID_CLIENTE FROM CLIENTES WHERE TELEFONE = '" + telefone + "'");
+            if (Conectar.rs != null && Conectar.rs.next()) {
+                Integer id = Conectar.rs.getInt("ID_CLIENTE");
+                Conectar.rs.close();
+                return id;
+            }
+            if (Conectar.rs != null) {
+                Conectar.rs.close();
+            }
+        } catch (SQLException e) {
+            ProgramaGas.salvarErro(e.getMessage() + "  Local:  " + e.getLocalizedMessage());
+            this.systemError.setText(e.toString());
+        }
+        return null;
+    }
+
     private void jButton1ActionPerformed(ActionEvent evt) {
         String numero1 = this.m.numero(this.telefoneTxt.getText());
         int tamNum1 = numero1.length();
@@ -446,15 +464,18 @@ public class CadastrarNovoCliente extends JFrame {
             String numero = this.numeroTxt.getText();
             String observacao = this.obsTxt.getText();
             String sql;
+            boolean clienteSalvo = false;
             if ("".equals(this.idClienteTxt.getText())) {
                 sql = "INSERT INTO clientes (TELEFONE,NOME,ID_ENDERECO,NUMERO,OBSERVACAO) VALUES('" + telefone + "','" + nome + "'," + id_endereco + ",'" + numero + "','" + observacao + "')";
 
                 try {
                     Conectar.alterar(sql);
                     this.msgTxt.setText("Cliente cadastrado com sucesso");
+                    clienteSalvo = true;
                 } catch (SQLException var13) {
                     ProgramaGas.salvarErro(var13.getMessage() + "  Local:  " + var13.getLocalizedMessage());
                     this.systemError.setText(var13.toString());
+                    return;
                 }
             } else {
                 sql = "UPDATE CLIENTES SET TELEFONE = '" + telefone + "' ,NOME = '" + nome + "',ID_ENDERECO = " + id_endereco + ",NUMERO = '" + numero + "',OBSERVACAO = '" + observacao + "'  where ID_CLIENTE = " + idCliente + "";
@@ -462,16 +483,29 @@ public class CadastrarNovoCliente extends JFrame {
                 try {
                     Conectar.alterar(sql);
                     this.msgTxt.setText("Dados do Cliente alterado com sucesso");
+                    clienteSalvo = true;
                 } catch (SQLException var12) {
                     ProgramaGas.salvarErro(var12.getMessage() + "  Local:  " + var12.getLocalizedMessage());
                     this.systemError.setText(var12.toString());
+                    return;
                 }
+            }
+
+            if (!clienteSalvo) {
+                return;
             }
 
             Integer novoIdCliente = null;
 
             if(!StringUtils.isBlank(idCliente)){
                 novoIdCliente = Integer.valueOf(idCliente);
+            } else {
+                novoIdCliente = buscarIdClientePorTelefone(telefone);
+            }
+
+            if (novoIdCliente == null) {
+                this.msgErro.setText("Cliente salvo, mas não foi possível obter o ID. Tente novamente.");
+                return;
             }
 
             ClienteLegadoDto clienteLegadoDto = new ClienteLegadoDto();
@@ -491,7 +525,7 @@ public class CadastrarNovoCliente extends JFrame {
             ClienteDto cliente = new ClienteDto();
             cliente.setIdCliente(novoIdCliente);
             cliente.setTelefone(telefone);
-            cliente.setViaApi(true);
+            cliente.setViaApi(Boolean.TRUE.equals(ProgramaGas.servico));
             cliente.setNome(this.nomeTxt.getText());
             cliente.setObservacao(observacao);
 

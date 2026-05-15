@@ -122,7 +122,12 @@ public class TelaPedidos extends JFrame {
             ClienteEndereco clienteEndereco = cliente.getClienteEnderecos().get(0);
 
             this.telefoneTxt.setText(cliente.getTelefone());
-            this.id_cliente = String.valueOf(cliente.getIdCliente());
+            if (cliente.getIdCliente() != null) {
+                this.id_cliente = String.valueOf(cliente.getIdCliente());
+            }
+            if (!Boolean.TRUE.equals(ProgramaGas.servico)) {
+                resolverIdClienteLocal(cliente.getTelefone());
+            }
 
             if(cliente.getUltimosPedidos() != null) {
                 try {
@@ -363,6 +368,33 @@ public class TelaPedidos extends JFrame {
         this.pack();
     }
 
+    private void resolverIdClienteLocal(String telefoneCliente) {
+        if (telefoneCliente == null || telefoneCliente.isEmpty()) {
+            return;
+        }
+        if (idClienteValido()) {
+            return;
+        }
+        try {
+            Conectar.pesquisar("SELECT ID_CLIENTE FROM CLIENTES WHERE TELEFONE = '" + telefoneCliente + "'");
+            if (Conectar.rs != null && Conectar.rs.next()) {
+                this.id_cliente = Conectar.rs.getString("ID_CLIENTE");
+            }
+            if (Conectar.rs != null) {
+                Conectar.rs.close();
+            }
+        } catch (SQLException e) {
+            ProgramaGas.salvarErro(e.getMessage() + "  Local:  " + e.getLocalizedMessage());
+            this.systemError.setText(e.toString());
+        }
+    }
+
+    private boolean idClienteValido() {
+        return this.id_cliente != null
+                && !this.id_cliente.isEmpty()
+                && !"null".equals(this.id_cliente);
+    }
+
     private void alterarEnderecoActionPerformed(ActionEvent evt) {
         CadastrarNovoCliente CNC = new CadastrarNovoCliente();
         CNC.setVisible(true);
@@ -380,48 +412,47 @@ public class TelaPedidos extends JFrame {
             String fDp = this.formaPagamento.getSelectedItem().toString();
             this.obsPedido = this.pedidoObs.getText();
 
-
-
+            boolean pedidoSalvo = false;
 
             if(!ProgramaGas.servico) {
+                if (!idClienteValido()) {
+                    resolverIdClienteLocal(this.telefone);
+                }
+                if (!idClienteValido()) {
+                    this.msgErro.setText("Cliente não identificado no banco. Cadastre ou recarregue o cliente.");
+                    return;
+                }
+
                 Date date = new Date();
                 DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                 String hoje = dateFormat.format(date);
                 String sql = "INSERT INTO PEDIDOS (DIA,ID_CLIENTEp,STATUS,  PEDIDO, OBSERVACAO,entregador,formadepagamento,VALOR) VALUES ('" + hoje + "'," + this.id_cliente + ", 'Aberto', '" + pedido + "', '" + this.obsPedido + "','Funcionário','" + fDp + "', " + this.txtTotal.getText() + ")";
 
-
                 try {
                     Conectar.alterar(sql);
-                } catch (SQLException var21) {
-                    ProgramaGas.salvarErro(var21.getMessage() + "  Local:  " + var21.getLocalizedMessage());
-                    this.systemError.setText(var21.toString());
-                }
 
-                String sql1 = "UPDATE CLIENTES set OBSERVACAO = '" + this.obsPedido + "' where id_cliente = " + this.id_cliente + "";
-
-                try {
+                    String sql1 = "UPDATE CLIENTES set OBSERVACAO = '" + this.obsPedido + "' where id_cliente = " + this.id_cliente + "";
                     Conectar.alterar(sql1);
-                } catch (SQLException var20) {
-                    ProgramaGas.salvarErro(var20.getMessage() + "  Local:  " + var20.getLocalizedMessage());
-                    this.systemError.setText(var20.toString());
-                }
 
-                String sql2 = "Select * from PEDIDOS where id_clientep = " + this.id_cliente + " and dia = '" + hoje + "' and pedido = '" + pedido + "'";
-
-                try {
+                    String sql2 = "Select * from PEDIDOS where id_clientep = " + this.id_cliente + " and dia = '" + hoje + "' and pedido = '" + pedido + "'";
                     Conectar.pesquisar(sql2);
-                    if (Conectar.rs.next()) {
+                    if (Conectar.rs != null && Conectar.rs.next()) {
                         this.id_pedido = Conectar.rs.getString("id_pedido");
+                        pedidoSalvo = this.id_pedido != null && !this.id_pedido.isEmpty();
                     }
-                    Conectar.rs.close();
-                } catch (SQLException var19) {
-                    ProgramaGas.salvarErro(var19.getMessage() + "  Local:  " + var19.getLocalizedMessage());
-                    this.systemError.setText(var19.toString());
+                    if (Conectar.rs != null) {
+                        Conectar.rs.close();
+                    }
+                    if (!pedidoSalvo) {
+                        this.msgErro.setText("Pedido não foi gravado no banco. Verifique os dados e tente novamente.");
+                    }
+                } catch (SQLException e) {
+                    ProgramaGas.salvarErro(e.getMessage() + "  Local:  " + e.getLocalizedMessage());
+                    this.systemError.setText(e.toString());
+                    this.msgErro.setText("Erro ao gravar pedido. Verifique o log.");
                 }
 
-
-            }else {
-
+            } else {
 
                 PedidoDto pedidoDto = new PedidoDto();
                 pedidoDto.setTelefoneCliente(this.telefone);
@@ -440,8 +471,17 @@ public class TelaPedidos extends JFrame {
                 Service service = new Service();
                 PedidoServicoDto pedidoEnviado = service.enviarPedido(pedidoDto);
 
-                this.id_pedido = pedidoEnviado.getIdPedido().toString();
+                if (pedidoEnviado != null && pedidoEnviado.getIdPedido() != null) {
+                    this.id_pedido = pedidoEnviado.getIdPedido().toString();
+                    pedidoSalvo = true;
+                } else {
+                    this.msgErro.setText("Erro ao enviar pedido para o serviço.");
+                }
 
+            }
+
+            if (!pedidoSalvo) {
+                return;
             }
 
             if(this.imprimirCheckBox.isSelected()) {
@@ -459,7 +499,6 @@ public class TelaPedidos extends JFrame {
 
                 ImpressoraUtils.reimprimir(dadosImpressaoDto);
             }
-            //Vendas.entradaTelTxt.setText("11");
             Vendas.AddLinhaTabela(pedido, this.nome, end, fDp, this.telefone, this.id_pedido);
             this.dispose();
             Vendas.pedidosAberto();

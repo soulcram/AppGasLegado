@@ -6,6 +6,7 @@ import br.com.m3Tech.appGasLegado.service.ClienteService;
 import br.com.m3Tech.appGasLegado.service.ConfigService;
 import br.com.m3Tech.appGasLegado.utils.BinaUtils;
 import br.com.m3Tech.utils.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import programagas.Metodos;
 
 import java.awt.Color;
@@ -46,6 +47,8 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.table.DefaultTableModel;
 
+
+@Slf4j
 public class Bina extends JFrame implements Runnable, SerialPortEventListener {
     Enumeration listaDePortas = CommPortIdentifier.getPortIdentifiers();
     SerialPort portaSerial;
@@ -85,6 +88,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
             }
             Conectar.rs.close();
         } catch (SQLException var3) {
+            log.error("Erros",var3);
             salvarErro(var3.getMessage());
             this.systemError.setText(var3.toString());
         }
@@ -138,6 +142,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
             this.msgTxt.setForeground(Color.green);
         } catch (PortInUseException var5) {
             salvarErro(var5.getMessage());
+            log.error("Erros",var5);
             this.msgTxt.setText("Erro");
             atLog.append("Erro ao conectar, porta em uso.\r\n");
             this.msgTxt.setForeground(Color.red);
@@ -147,6 +152,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
         try {
             this.inputStream = this.portaSerial.getInputStream();
         } catch (IOException var4) {
+            log.error("Erros",var4);
             salvarErro(var4.getMessage());
             this.msgTxt.setText("Erro");
             this.msgTxt.setForeground(Color.red);
@@ -156,6 +162,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
         try {
             this.portaSerial.addEventListener(this);
         } catch (TooManyListenersException var3) {
+            log.error("Erros",var3);
             salvarErro(var3.getMessage());
             this.msgTxt.setText("Erro");
             this.msgTxt.setForeground(Color.red);
@@ -169,6 +176,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
             this.portaSerial.setDTR(true);
             this.portaSerial.setRTS(false);
         } catch (UnsupportedCommOperationException var2) {
+            log.error("Erros",var2);
             salvarErro(var2.getMessage());
             this.msgTxt.setText("Erro");
             this.msgTxt.setForeground(Color.red);
@@ -278,6 +286,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
         try {
             Conectar.alterar(sql);
         } catch (SQLException var5) {
+            log.error("Erros",var5);
             Logger.getLogger(programagas.Bina.class.getName()).log(Level.SEVERE, (String)null, var5);
             this.systemError.setText(var5.toString());
             atLog.append(var5.getMessage() + "\r\n");
@@ -298,6 +307,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
             BW.newLine();
             BW.close();
         } catch (IOException var6) {
+            log.error("Erros",var6);
             Logger.getLogger(programagas.Bina.class.getName()).log(Level.SEVERE, (String)null, var6);
             atLog.append(var6.getMessage());
         }
@@ -321,6 +331,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
                 }
             }
         } catch (InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException | ClassNotFoundException var5) {
+            log.error("Erros",var5);
             Logger.getLogger(programagas.Bina.class.getName()).log(Level.SEVERE, (String)null, var5);
         }
 
@@ -333,6 +344,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
         try {
             Thread.sleep(20000L);
         } catch (InterruptedException var2) {
+            log.error("Erros",var2);
             atLog.append(var2.getMessage() + "\r\n");
             salvarErro(var2.getMessage());
         }
@@ -398,7 +410,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
 
                 } catch (Exception ex) {
                     System.err.println(ex.getMessage());
-
+                    log.error("Erros",ex);
                     portaSerial.close();
                     conectarPorta();
 
@@ -458,6 +470,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
                 Conectar.rs.close();
             }
         } catch (SQLException var8) {
+            log.error("Erros",var8);
             salvarErro(var8.getMessage());
             Vendas.systemError.setText(var8.getMessage());
             atLog.append(var8.getMessage() + "\r\n");
