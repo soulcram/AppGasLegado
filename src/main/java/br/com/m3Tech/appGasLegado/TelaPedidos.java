@@ -1,14 +1,20 @@
 package br.com.m3Tech.appGasLegado;
 
 import br.com.m3Tech.appGasLegado.dto.*;
+import br.com.m3Tech.appGasLegado.ui.AppTheme;
+import br.com.m3Tech.appGasLegado.ui.UiComponents;
 import br.com.m3Tech.appGasLegado.utils.ImpressoraUtils;
 import br.com.m3Tech.appGasLegado.utils.PedidosUtils;
 import br.com.m3Tech.utils.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
 
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.math.BigDecimal;
@@ -16,8 +22,10 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import javax.print.DocFlavor;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
@@ -55,7 +63,6 @@ public class TelaPedidos extends JFrame {
     private JButton jButton1;
     private JButton jButton2;
     private JLabel jLabel1;
-    private JPanel jPanel1;
     private JPanel jPanel2;
     private JScrollPane jScrollPane1;
     private JScrollPane jScrollPane2;
@@ -132,8 +139,12 @@ public class TelaPedidos extends JFrame {
             if(cliente.getUltimosPedidos() != null) {
                 try {
                     DefaultTableModel model = (DefaultTableModel) this.jTable1.getModel();
+                    List<PedidoLegadoSimplesDto> pedidosOrdenados = new ArrayList<>(cliente.getUltimosPedidos());
+                    pedidosOrdenados.sort(Comparator.comparing(
+                            PedidoLegadoSimplesDto::getData,
+                            Comparator.nullsLast(Comparator.reverseOrder())));
 
-                    for (PedidoLegadoSimplesDto pedidoDto : cliente.getUltimosPedidos()) {
+                    for (PedidoLegadoSimplesDto pedidoDto : pedidosOrdenados) {
                         //ordem das colunas "Data", "Pedido", "Valor", "Loja", "Forma de Pagamento", "Entregador", "Status"
                         String[] conteudo = new String[]{
                                 pedidoDto.getData() == null ? "" : pedidoDto.getData().toString(),
@@ -213,12 +224,36 @@ public class TelaPedidos extends JFrame {
             try {
                 Conectar.pesquisar(sql2);
                 DefaultTableModel model = (DefaultTableModel) this.jTable1.getModel();
+                List<String[]> linhas = new ArrayList<>();
+                DateFormat formatoDia = new SimpleDateFormat("dd/MM/yyyy");
 
                 while (Conectar.rs.next()) {
-                    String[] conteudo = new String[]{Conectar.rs.getString("DIA"), Conectar.rs.getString("PEDIDO"), Conectar.rs.getString("VALOR") ,"", Conectar.rs.getString("formadepagamento"), Conectar.rs.getString("ENTREGADOR"), Conectar.rs.getString("STATUS") };
-                    model.addRow(conteudo);
+                    linhas.add(new String[]{Conectar.rs.getString("DIA"), Conectar.rs.getString("PEDIDO"), Conectar.rs.getString("VALOR") ,"", Conectar.rs.getString("formadepagamento"), Conectar.rs.getString("ENTREGADOR"), Conectar.rs.getString("STATUS") });
                 }
                 Conectar.rs.close();
+
+                linhas.sort((a, b) -> {
+                    if (a[0] == null && b[0] == null) {
+                        return 0;
+                    }
+                    if (a[0] == null) {
+                        return 1;
+                    }
+                    if (b[0] == null) {
+                        return -1;
+                    }
+                    try {
+                        Date dataA = formatoDia.parse(a[0]);
+                        Date dataB = formatoDia.parse(b[0]);
+                        return dataB.compareTo(dataA);
+                    } catch (Exception e) {
+                        return b[0].compareTo(a[0]);
+                    }
+                });
+
+                for (String[] conteudo : linhas) {
+                    model.addRow(conteudo);
+                }
             } catch (SQLException var7) {
                 ProgramaGas.salvarErro(var7.getMessage() + "  Local:  " + var7.getLocalizedMessage());
                 this.systemError.setText(var7.toString());
@@ -236,46 +271,44 @@ public class TelaPedidos extends JFrame {
     private void initComponents() {
         this.produtosCol = new JComboBox();
         this.quantCol = new JComboBox();
-        this.jPanel1 = new JPanel();
-        this.idTxt = new JLabel();
-        this.nomeTxt = new JLabel();
-        this.endTxt = new JLabel();
+        this.idTxt = new JLabel("ID");
+        this.nomeTxt = new JLabel("Nome");
+        this.endTxt = new JLabel("Endereço");
+        this.obsTxt = new JLabel("Observação");
+        this.telefoneTxt = new JLabel("Telefone");
         this.jScrollPane1 = new JScrollPane();
         this.jTable1 = new JTable();
-        this.obsTxt = new JLabel();
-        this.jPanel2 = new JPanel();
-        this.jLabel1 = new JLabel();
-        this.formaPagamento = new JComboBox();
         this.jScrollPane2 = new JScrollPane();
         this.jTable2 = new JTable();
-        this.jButton1 = new JButton();
+        this.jLabel1 = new JLabel("Forma de pagamento", SwingConstants.CENTER);
+        this.formaPagamento = new JComboBox();
         this.txtTotal = new JTextField();
-        this.jButton2 = new JButton();
-        this.botaoOk = new JButton();
         this.pedidoObs = new JTextField();
-        this.alterarEndereco = new JButton();
         this.msgErro = new JLabel();
-        this.telefoneTxt = new JLabel();
         this.systemError = new JLabel();
         this.boxImpressoras = new JComboBox();
-        this.quantCol.setModel(new DefaultComboBoxModel(new String[]{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"}));
-        this.setDefaultCloseOperation(2);
+        this.imprimirCheckBox = new JCheckBox("Imprimir pedido");
+
+        this.quantCol.setModel(new DefaultComboBoxModel(new String[]{
+                "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"
+        }));
+        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         this.setTitle("Pedidos");
-        this.jPanel1.setBackground(new Color(255, 255, 255));
-        this.jPanel1.setBorder(BorderFactory.createTitledBorder((Border)null, "Pedido", 2, 1, new Font("Tahoma", 0, 18)));
-        this.idTxt.setFont(new Font("Tahoma", 1, 14));
-        this.idTxt.setText("ID");
-        this.nomeTxt.setFont(new Font("Tahoma", 1, 14));
-        this.nomeTxt.setText("Nome");
-        this.endTxt.setFont(new Font("Tahoma", 1, 14));
-        this.endTxt.setText("Endereço");
+        UiComponents.applyFrameDefaults(this);
 
-        this.imprimirCheckBox = new JCheckBox("Deve Imprimir?");
-        this.imprimirCheckBox.setBounds(795,80,190,30);
+        for (JLabel label : new JLabel[]{idTxt, nomeTxt, endTxt, obsTxt, telefoneTxt}) {
+            label.setFont(AppTheme.fontSubtitle());
+            label.setForeground(AppTheme.TEXT);
+        }
+        UiComponents.styleErrorLabel(msgErro);
+        UiComponents.styleErrorLabel(systemError);
 
-        this.jScrollPane1.setBorder(BorderFactory.createTitledBorder("Ultimos Pedidos"));
-        this.jTable1.setModel(new DefaultTableModel(new Object[0][], new String[]{ "Data", "Pedido", "Valor", "Loja", "Forma de Pagamento", "Entregador", "Status"}) {
-            Class[] types = new Class[]{String.class, String.class, String.class, String.class, String.class, String.class, String.class};
+        this.jTable1.setModel(new DefaultTableModel(new Object[0][], new String[]{
+                "Data", "Pedido", "Valor", "Loja", "Forma de Pagamento", "Entregador", "Status"
+        }) {
+            Class[] types = new Class[]{String.class, String.class, String.class, String.class,
+                    String.class, String.class, String.class};
             boolean[] canEdit = new boolean[]{false, false, false, false, false, false, false};
 
             public Class getColumnClass(int columnIndex) {
@@ -286,7 +319,8 @@ public class TelaPedidos extends JFrame {
                 return this.canEdit[columnIndex];
             }
         });
-        this.jTable1.setAutoResizeMode(0);
+        this.jTable1.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        UiComponents.styleTable(this.jTable1);
         this.jScrollPane1.setViewportView(this.jTable1);
         if (this.jTable1.getColumnModel().getColumnCount() > 0) {
             this.jTable1.getColumnModel().getColumn(0).setPreferredWidth(90);
@@ -299,15 +333,12 @@ public class TelaPedidos extends JFrame {
             this.jTable1.getColumnModel().getColumn(6).setMaxWidth(150);
         }
 
-        this.obsTxt.setFont(new Font("Tahoma", 1, 14));
-        this.obsTxt.setText("Observação");
-        this.jPanel2.setBorder(BorderFactory.createTitledBorder("Pedido de Hoje"));
-        this.jLabel1.setFont(new Font("Tahoma", 1, 12));
-        this.jLabel1.setHorizontalAlignment(0);
-        this.jLabel1.setText("Forma de Pagamento");
         this.formaPagamento.setEditable(true);
-        this.formaPagamento.setFont(new Font("Tahoma", 1, 12));
-        this.formaPagamento.setModel(new DefaultComboBoxModel(new String[]{"Troco não","QR CODE", "Visa", "Mastercard","Troco 100,00", "Troco 200,00", "Troco 50,00", "Troco 60,00", "Troco100,00", "Troco 70,00", "Troco 10,00", "Troco 20,00", "Elo", "Mais", "Hipercard", "Outros", "Troco 9,00", "Troco 15,00"}));
+        this.formaPagamento.setModel(new DefaultComboBoxModel(new String[]{
+                "Troco não", "QR CODE", "Visa", "Mastercard", "Troco 100,00", "Troco 200,00",
+                "Troco 50,00", "Troco 60,00", "Troco100,00", "Troco 70,00", "Troco 10,00",
+                "Troco 20,00", "Elo", "Mais", "Hipercard", "Outros", "Troco 9,00", "Troco 15,00"
+        }));
         this.jTable2.setModel(new DefaultTableModel(new Object[0][], new String[]{"Produto", "Quantidade", "Valor Unidade"}) {
             Class[] types = new Class[]{String.class, String.class, String.class};
 
@@ -315,57 +346,144 @@ public class TelaPedidos extends JFrame {
                 return this.types[columnIndex];
             }
         });
+        UiComponents.styleTable(this.jTable2);
         this.jScrollPane2.setViewportView(this.jTable2);
-        this.jButton1.setBackground(new Color(0, 102, 255));
-        this.jButton1.setText("+");
+
+        this.jButton1 = UiComponents.primaryButton("+");
+        this.jButton1.setPreferredSize(new Dimension(48, 40));
         this.jButton1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
-        this.jButton2.setText("Total");
+        this.jButton2 = UiComponents.secondaryButton("Total");
         this.jButton2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-               jButton2ActionPerformed(evt);
+                jButton2ActionPerformed(evt);
             }
         });
-        GroupLayout jPanel2Layout = new GroupLayout(this.jPanel2);
-        this.jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel2Layout.createSequentialGroup().addContainerGap().addComponent(this.jScrollPane2, -2, 293, -2).addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel2Layout.createSequentialGroup().addPreferredGap(ComponentPlacement.RELATED, 101, 32767).addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING, false).addComponent(this.txtTotal).addComponent(this.jButton2, -1, 91, 32767)).addGap(35, 35, 35).addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING, false).addComponent(this.formaPagamento, 0, -1, 32767).addComponent(this.jLabel1, -1, 173, 32767)).addContainerGap()).addGroup(jPanel2Layout.createSequentialGroup().addGap(11, 11, 11).addComponent(this.jButton1).addContainerGap(-1, 32767)))));
-        jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel2Layout.createSequentialGroup().addGroup(jPanel2Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel2Layout.createSequentialGroup().addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE).addComponent(this.jLabel1, -2, 23, -2).addComponent(this.jButton2)).addPreferredGap(ComponentPlacement.RELATED).addGroup(jPanel2Layout.createParallelGroup(Alignment.BASELINE).addComponent(this.formaPagamento, -2, -1, -2).addComponent(this.txtTotal, -2, -1, -2)).addPreferredGap(ComponentPlacement.RELATED, -1, 32767).addComponent(this.jButton1)).addGroup(jPanel2Layout.createSequentialGroup().addGap(0, 0, 32767).addComponent(this.jScrollPane2, -2, 97, -2))).addContainerGap()));
-        this.botaoOk.setBackground(new Color(0, 102, 255));
-        this.botaoOk.setFont(new Font("Tahoma", 1, 18));
-        this.botaoOk.setText("OK");
+        this.botaoOk = UiComponents.primaryButton("Salvar pedido");
+        this.botaoOk.setFont(AppTheme.font(java.awt.Font.BOLD, 16));
+        this.botaoOk.setPreferredSize(new Dimension(220, 52));
+        this.botaoOk.setMinimumSize(new Dimension(180, 52));
+        this.botaoOk.setMaximumSize(new Dimension(320, 52));
         this.botaoOk.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 botaoOkActionPerformed(evt);
             }
         });
-        this.pedidoObs.setBorder(BorderFactory.createTitledBorder("Observações para o pedido"));
-        this.alterarEndereco.setBackground(new Color(0, 102, 255));
-        this.alterarEndereco.setFont(new Font("Tahoma", 1, 11));
-        this.alterarEndereco.setText("Alterar endereço");
+        this.alterarEndereco = UiComponents.secondaryButton("Alterar endereço");
         this.alterarEndereco.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 alterarEnderecoActionPerformed(evt);
             }
         });
-        this.msgErro.setFont(new Font("Tahoma", 1, 12));
-        this.msgErro.setForeground(new Color(204, 0, 0));
-        this.telefoneTxt.setFont(new Font("Tahoma", 1, 14));
-        this.telefoneTxt.setText("Telefone");
-        this.systemError.setForeground(new Color(204, 0, 0));
-        GroupLayout jPanel1Layout = new GroupLayout(this.jPanel1);
-        this.jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addContainerGap().addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addComponent(this.obsTxt, -1, -1, 32767).addComponent(this.nomeTxt, -1, -1, 32767).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.endTxt, -1, -1, 32767).addGap(60, 60, 60)).addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup().addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING).addComponent(this.pedidoObs, Alignment.LEADING).addComponent(this.jScrollPane1).addGroup(Alignment.LEADING, jPanel1Layout.createSequentialGroup().addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING, false).addComponent(this.jPanel2, -1, -1, 32767).addComponent(this.msgErro, -1, -1, 32767)).addGap(18, 18, 18).addComponent(this.botaoOk, -1, 217, 32767))).addGap(4, 4, 4)).addGroup(jPanel1Layout.createSequentialGroup().addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addComponent(this.telefoneTxt, -2, 897, -2).addComponent(this.systemError, -2, 952, -2)).addGap(0, 0, 32767)).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.idTxt, -2, 162, -2).addPreferredGap(ComponentPlacement.RELATED, -1, 32767).addComponent(this.boxImpressoras, -2, 187, -2)).addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup().addGap(0, 0, 32767).addComponent(this.alterarEndereco))).addContainerGap()));
-        jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addContainerGap().addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE).addComponent(this.idTxt).addComponent(this.boxImpressoras, -2, -1, -2)).addGap(13, 13, 13).addComponent(this.telefoneTxt).addGap(18, 18, 18).addComponent(this.nomeTxt).addGap(18, 18, 18).addComponent(this.endTxt).addGap(18, 18, 18).addComponent(this.obsTxt).addGap(35, 35, 35).addComponent(this.alterarEndereco).addPreferredGap(ComponentPlacement.UNRELATED).addComponent(this.jScrollPane1, -2, 130, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.msgErro, -2, 24, -2).addGap(21, 21, 21).addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING, false).addComponent(this.botaoOk, -1, -1, 32767).addComponent(this.jPanel2, -1, -1, 32767)).addGap(18, 18, 18).addComponent(this.pedidoObs, -2, -1, -2).addPreferredGap(ComponentPlacement.RELATED, -1, 32767).addComponent(this.systemError, -2, 25, -2)));
-        GroupLayout layout = new GroupLayout(this.getContentPane());
-        this.getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(this.jPanel1, Alignment.TRAILING, -1, -1, 32767));
-        layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(this.jPanel1, Alignment.TRAILING, -1, -1, 32767));
+        this.pedidoObs.setBorder(BorderFactory.createTitledBorder("Observações para o pedido"));
 
-        this.jPanel1.add(imprimirCheckBox);
-        this.pack();
+        JPanel clientCard = UiComponents.cardPanel("Cliente");
+        clientCard.setLayout(new GridBagLayout());
+        GridBagConstraints gc = new GridBagConstraints();
+        gc.gridx = 0;
+        gc.gridy = 0;
+        gc.anchor = GridBagConstraints.WEST;
+        gc.insets = new Insets(0, 0, 6, 0);
+        clientCard.add(idTxt, gc);
+        gc.gridy++;
+        clientCard.add(telefoneTxt, gc);
+        gc.gridy++;
+        clientCard.add(nomeTxt, gc);
+        gc.gridy++;
+        clientCard.add(endTxt, gc);
+        gc.gridy++;
+        clientCard.add(obsTxt, gc);
+        gc.gridy++;
+        clientCard.add(alterarEndereco, gc);
+
+        JPanel historyCard = UiComponents.cardPanel("Últimos pedidos");
+        historyCard.setLayout(new BorderLayout());
+        historyCard.add(jScrollPane1, BorderLayout.CENTER);
+        historyCard.setPreferredSize(new Dimension(400, 160));
+
+        JPanel leftCol = new JPanel();
+        leftCol.setLayout(new BoxLayout(leftCol, BoxLayout.Y_AXIS));
+        leftCol.setOpaque(false);
+        leftCol.add(clientCard);
+        leftCol.add(Box.createVerticalStrut(AppTheme.PAD_SM));
+        leftCol.add(historyCard);
+        leftCol.add(Box.createVerticalStrut(AppTheme.PAD_SM));
+        msgErro.setAlignmentX(0f);
+        leftCol.add(msgErro);
+
+        this.jPanel2 = UiComponents.cardPanel("Pedido de hoje");
+        jPanel2.setLayout(new BorderLayout(AppTheme.PAD, AppTheme.PAD));
+        JPanel orderTop = new JPanel(new BorderLayout(AppTheme.PAD_SM, AppTheme.PAD_SM));
+        orderTop.setOpaque(false);
+        orderTop.add(jScrollPane2, BorderLayout.CENTER);
+        JPanel orderSide = new JPanel();
+        orderSide.setLayout(new BoxLayout(orderSide, BoxLayout.Y_AXIS));
+        orderSide.setOpaque(false);
+        orderSide.add(jButton1);
+        orderSide.add(Box.createVerticalStrut(8));
+        orderSide.add(jLabel1);
+        orderSide.add(Box.createVerticalStrut(4));
+        orderSide.add(formaPagamento);
+        orderSide.add(Box.createVerticalStrut(8));
+        orderSide.add(jButton2);
+        orderSide.add(Box.createVerticalStrut(4));
+        orderSide.add(txtTotal);
+        orderTop.add(orderSide, BorderLayout.EAST);
+        jPanel2.add(orderTop, BorderLayout.CENTER);
+
+        JPanel actionsCard = UiComponents.cardPanel("Finalizar");
+        actionsCard.setLayout(new GridBagLayout());
+        GridBagConstraints ac = new GridBagConstraints();
+        ac.gridx = 0;
+        ac.gridy = 0;
+        ac.weightx = 1;
+        ac.fill = GridBagConstraints.HORIZONTAL;
+        ac.insets = new Insets(0, 0, 8, 0);
+        actionsCard.add(pedidoObs, ac);
+        ac.gridy++;
+        actionsCard.add(boxImpressoras, ac);
+        ac.gridy++;
+        actionsCard.add(imprimirCheckBox, ac);
+
+        JPanel rightCol = new JPanel();
+        rightCol.setLayout(new BoxLayout(rightCol, BoxLayout.Y_AXIS));
+        rightCol.setOpaque(false);
+        rightCol.add(jPanel2);
+        rightCol.add(Box.createVerticalStrut(AppTheme.PAD));
+        rightCol.add(actionsCard);
+
+        JPanel columns = new JPanel(new GridBagLayout());
+        columns.setOpaque(false);
+        GridBagConstraints cc = new GridBagConstraints();
+        cc.gridx = 0;
+        cc.gridy = 0;
+        cc.weightx = 0.45;
+        cc.weighty = 1;
+        cc.fill = GridBagConstraints.BOTH;
+        cc.insets = new Insets(0, 0, 0, AppTheme.PAD);
+        columns.add(leftCol, cc);
+        cc.gridx = 1;
+        cc.weightx = 0.55;
+        columns.add(rightCol, cc);
+
+        JPanel footer = new JPanel(new BorderLayout(AppTheme.PAD, 0));
+        footer.setOpaque(false);
+        footer.setBorder(BorderFactory.createEmptyBorder(AppTheme.PAD, 0, 0, 0));
+        footer.add(systemError, BorderLayout.CENTER);
+        footer.add(botaoOk, BorderLayout.EAST);
+
+        JPanel root = new JPanel(new BorderLayout(0, AppTheme.PAD));
+        root.setBackground(AppTheme.BACKGROUND);
+        root.setBorder(BorderFactory.createEmptyBorder(AppTheme.PAD, AppTheme.PAD, AppTheme.PAD, AppTheme.PAD));
+        root.add(UiComponents.headerBar("Novo pedido"), BorderLayout.NORTH);
+        root.add(columns, BorderLayout.CENTER);
+        root.add(footer, BorderLayout.SOUTH);
+        getContentPane().add(root);
+        pack();
+        setSize(Math.max(getWidth(), 980), Math.max(getHeight(), 640));
     }
 
     private void resolverIdClienteLocal(String telefoneCliente) {
@@ -426,7 +544,8 @@ public class TelaPedidos extends JFrame {
                 Date date = new Date();
                 DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                 String hoje = dateFormat.format(date);
-                String sql = "INSERT INTO PEDIDOS (DIA,ID_CLIENTEp,STATUS,  PEDIDO, OBSERVACAO,entregador,formadepagamento,VALOR) VALUES ('" + hoje + "'," + this.id_cliente + ", 'Aberto', '" + pedido + "', '" + this.obsPedido + "','Funcionário','" + fDp + "', " + this.txtTotal.getText() + ")";
+                String valorPedido = getValorFormatado(this.txtTotal.getText()).toPlainString();
+                String sql = "INSERT INTO PEDIDOS (DIA,ID_CLIENTEp,STATUS,  PEDIDO, OBSERVACAO,entregador,formadepagamento,VALOR) VALUES ('" + hoje + "'," + this.id_cliente + ", 'Aberto', '" + pedido + "', '" + this.obsPedido + "','Funcionário','" + fDp + "', " + valorPedido + ")";
 
                 try {
                     Conectar.alterar(sql);
@@ -540,9 +659,13 @@ public class TelaPedidos extends JFrame {
                 total += valor * (double)multiplicador;
             }
 
-            this.txtTotal.setText(Double.toString(total).replace(",", ".") + "0");
+            this.txtTotal.setText(formatarTotalParaExibicao(total));
         }
 
+    }
+
+    private String formatarTotalParaExibicao(double total) {
+        return String.format(new Locale("pt", "BR"), "%.2f", total);
     }
 
     private String montarPedido() {

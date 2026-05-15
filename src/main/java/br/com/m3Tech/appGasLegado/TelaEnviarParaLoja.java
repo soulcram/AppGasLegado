@@ -1,112 +1,78 @@
 package br.com.m3Tech.appGasLegado;
 
 import br.com.m3Tech.appGasLegado.dto.AlterarLojaDto;
-import br.com.m3Tech.appGasLegado.entity.Config;
-import br.com.m3Tech.appGasLegado.service.ConfigService;
-import br.com.m3Tech.utils.BooleanUtils;
+import br.com.m3Tech.appGasLegado.ui.AppTheme;
+import br.com.m3Tech.appGasLegado.ui.UiComponents;
+import br.com.m3Tech.appGasLegado.ui.UiLayout;
 import br.com.m3Tech.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
-import programagas.Mascaras;
 
-import javax.comm.CommPortIdentifier;
-import javax.print.DocFlavor;
-import javax.print.DocFlavor.SERVICE_FORMATTED;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
-import javax.print.attribute.AttributeSet;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.text.DateFormatter;
-import javax.swing.text.DefaultFormatterFactory;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.util.Enumeration;
 
 @Slf4j
 public class TelaEnviarParaLoja extends JFrame {
 
     private JButton bEnviar;
     private JComboBox<String> boxLojas;
-    private JLabel jLabelLojas;
-    private JPanel jPanel1;
     private Integer idPedido;
 
     public TelaEnviarParaLoja(Integer idPedido) {
         try {
-            this.initComponents();
             this.idPedido = idPedido;
-
-
+            this.initComponents();
             this.boxLojas.removeAllItems();
             this.boxLojas.addItem("Consigaz Piraju");
             this.boxLojas.addItem("Consigaz 3 Marias");
             this.boxLojas.addItem("Gasbom Cocaia");
             this.boxLojas.addItem("Consigaz 3 Coracoes");
-
         } catch (Exception var9) {
             log.error(var9.getMessage() + "  Local:  " + var9.getLocalizedMessage());
         }
-
-
     }
 
     private void initComponents() {
-        this.jPanel1 = new JPanel();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setTitle("Enviar para loja");
+        UiComponents.applyFrameDefaults(this);
 
-        this.bEnviar = new JButton();
-
-        this.setDefaultCloseOperation(2);
-        this.setTitle("Configurações");
-
-        this.jLabelLojas = new JLabel();
-        this.jLabelLojas.setBounds(10,10,150,30);
-        this.jLabelLojas.setFont(new Font("Tahoma", 1, 12));
-        this.jLabelLojas.setText("Lojas Disponíveis");
-
-        this.boxLojas = new JComboBox();
-        this.boxLojas.setBorder((Border)null);
-        this.boxLojas.setBounds(180,10,150,30);
-
-
-        this.bEnviar.setText("Enviar");
-        this.bEnviar.setBounds(180,110,100,30);
-        this.bEnviar.addActionListener(new ActionListener() {
+        boxLojas = new JComboBox<>();
+        bEnviar = UiComponents.primaryButton("Enviar");
+        bEnviar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 bEnviarActionPerformed(evt);
             }
         });
 
-        jPanel1.setBounds(10,10,420,400);
-        jPanel1.setLayout(null);
-        jPanel1.setBackground(Color.WHITE);
+        JPanel form = UiLayout.formPanel("Selecione a loja");
+        UiLayout.addFormRow(form, 0, UiLayout.formRow("Loja", boxLojas));
 
-        jPanel1.add(jLabelLojas);
-        jPanel1.add(boxLojas);
+        JPanel footer = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        footer.setOpaque(false);
+        footer.add(bEnviar);
 
-        jPanel1.add(bEnviar);
-
-        this.setBounds(10, 10, 430, 400);
-        this.setLayout(null);
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        this.add(jPanel1);
-        this.repaint();
-
+        JPanel root = new JPanel(new BorderLayout(0, AppTheme.PAD));
+        root.setBackground(AppTheme.BACKGROUND);
+        root.setBorder(BorderFactory.createEmptyBorder(AppTheme.PAD_LG, AppTheme.PAD_LG, AppTheme.PAD_LG, AppTheme.PAD_LG));
+        root.add(UiComponents.headerBar("Enviar para loja"), BorderLayout.NORTH);
+        root.add(form, BorderLayout.CENTER);
+        root.add(footer, BorderLayout.SOUTH);
+        getContentPane().add(root);
+        pack();
+        setSize(Math.max(getWidth(), 420), Math.max(getHeight(), 220));
     }
 
-
     private void bEnviarActionPerformed(ActionEvent evt) {
-
         String lojaSelecionada = boxLojas.getSelectedItem().toString();
 
-        if(StringUtils.emptyOrNull(lojaSelecionada)) {
+        if (StringUtils.emptyOrNull(lojaSelecionada)) {
             log.error("Nenhuma loja Selecionada");
             return;
         }
 
-        if(lojaSelecionada.equals(ProgramaGas.nomeLoja)) {
+        if (lojaSelecionada.equals(ProgramaGas.nomeLoja)) {
             log.error("Loja Selecionada já é a loja atual");
             return;
         }
@@ -116,10 +82,6 @@ public class TelaEnviarParaLoja extends JFrame {
         alterarLojaDto.setIdPedido(this.idPedido);
 
         new Service().alterarLoja(alterarLojaDto);
-
         this.dispose();
     }
-
-
 }
-

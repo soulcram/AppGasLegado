@@ -2,6 +2,8 @@ package br.com.m3Tech.appGasLegado;
 
 
 import br.com.m3Tech.appGasLegado.dto.ClienteDto;
+import br.com.m3Tech.appGasLegado.ui.AppTheme;
+import br.com.m3Tech.appGasLegado.ui.UiComponents;
 import br.com.m3Tech.appGasLegado.dto.ClienteEndereco;
 import br.com.m3Tech.appGasLegado.dto.PedidoLegadoSimplesDto;
 import br.com.m3Tech.appGasLegado.service.ClienteService;
@@ -85,16 +87,17 @@ public class TelaCliente extends JFrame {
         this.systemError = new JLabel();
         this.setDefaultCloseOperation(2);
         this.setTitle("Clientes");
-        this.jPanel1.setBackground(new Color(255, 255, 153));
-        this.idTxt.setFont(new Font("Tahoma", 1, 14));
+        this.jPanel1 = UiComponents.cardPanel("Dados do cliente");
+        this.idTxt.setFont(AppTheme.fontSubtitle());
         this.idTxt.setText("ID");
-        this.jLabel2.setFont(new Font("Tahoma", 1, 14));
+        this.jLabel2.setFont(AppTheme.fontLabelBold());
         this.jLabel2.setText("Nome");
-        this.jLabel3.setFont(new Font("Tahoma", 1, 14));
+        this.jLabel3.setFont(AppTheme.fontLabelBold());
         this.jLabel3.setText("Endereço");
-        this.jLabel4.setFont(new Font("Tahoma", 1, 14));
+        this.jLabel4.setFont(AppTheme.fontLabelBold());
         this.jLabel4.setText("Observação");
-        this.msgTabela.setFont(new Font("Tahoma", 1, 12));
+        this.msgTabela.setFont(AppTheme.fontLabel());
+        this.msgTabela.setForeground(AppTheme.TEXT_MUTED);
         this.msgTabela.setText("Pedidos realizados");
         this.jTable1.setModel(new DefaultTableModel(new Object[0][], new String[]{"", "", "", "", ""}) {
             Class[] types = new Class[]{String.class, String.class, String.class, String.class, String.class};
@@ -113,6 +116,7 @@ public class TelaCliente extends JFrame {
                 jTable1MouseClicked(evt);
             }
         });
+        UiComponents.styleTable(this.jTable1);
         this.jScrollPane1.setViewportView(this.jTable1);
         if (this.jTable1.getColumnModel().getColumnCount() > 0) {
             this.jTable1.getColumnModel().getColumn(0).setMaxWidth(100);
@@ -142,18 +146,15 @@ public class TelaCliente extends JFrame {
             }
         });
         this.obsTxt.setFont(new Font("Tahoma", 1, 14));
-        this.botaoAlterar.setFont(new Font("Tahoma", 1, 12));
-        this.botaoAlterar.setText("Alterar Dados ");
+        this.botaoAlterar = UiComponents.secondaryButton("Alterar dados");
         this.botaoAlterar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 botaoAlterarActionPerformed(evt);
             }
         });
 
-        this.consultarPorNome.setBounds(350,40,180,20);
+        this.consultarPorNome = UiComponents.secondaryButton("Consultar por nome");
         this.consultarPorNome.setVisible(BooleanUtils.defaultFalseIfNull(ProgramaGas.servico));
-        this.consultarPorNome.setFont(new Font("Tahoma", 1, 12));
-        this.consultarPorNome.setText("Consultar Por Nome");
         this.consultarPorNome.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 botaoConsultarPorNomeActionPerformed(evt);
@@ -162,7 +163,7 @@ public class TelaCliente extends JFrame {
 
 
 
-        this.jLabel5.setFont(new Font("Tahoma", 1, 14));
+        this.jLabel5.setFont(AppTheme.fontLabelBold());
         this.jLabel5.setText("Telefone");
         this.telefoneTxt.setFont(new Font("Tahoma", 1, 14));
         this.telefoneTxt.setToolTipText("EX: 11954112227");
@@ -180,8 +181,7 @@ public class TelaCliente extends JFrame {
                 telefoneTxtKeyPressed(evt);
             }
         });
-        this.botaoOK.setFont(new Font("Tahoma", 1, 12));
-        this.botaoOK.setText("OK");
+        this.botaoOK = UiComponents.primaryButton("OK");
         this.botaoOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 botaoOKActionPerformed(evt);
@@ -189,16 +189,17 @@ public class TelaCliente extends JFrame {
         });
         GroupLayout jPanel1Layout = new GroupLayout(this.jPanel1);
         this.jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addContainerGap().addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addComponent(this.jScrollPane1).addGroup(jPanel1Layout.createSequentialGroup().addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addComponent(this.msgTabela).addComponent(this.idTxt, -2, 84, -2).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.jLabel2, -2, 84, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.nomeTxt, -2, 236, -2))).addGap(0, 0, 32767)).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.botaoAlterar).addPreferredGap(ComponentPlacement.RELATED, -1, 32767).addComponent(this.botaoOK, -2, 100, -2))).addContainerGap()).addGroup(jPanel1Layout.createSequentialGroup().addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.jLabel4, -2, 84, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.obsTxt, -2, 658, -2)).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.jLabel3, -2, 84, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.endTxt, -2, 658, -2)).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.jLabel5, -2, 84, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.telefoneTxt, -2, 236, -2))).addGap(0, 24, 32767)))));
+        jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addContainerGap().addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addComponent(this.jScrollPane1).addGroup(jPanel1Layout.createSequentialGroup().addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addComponent(this.msgTabela).addComponent(this.idTxt, -2, 84, -2).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.jLabel2, -2, 84, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.nomeTxt, -2, 236, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.consultarPorNome))).addGap(0, 0, 32767)).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.botaoAlterar).addPreferredGap(ComponentPlacement.RELATED, -1, 32767).addComponent(this.botaoOK, -2, 100, -2))).addContainerGap()).addGroup(jPanel1Layout.createSequentialGroup().addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.jLabel4, -2, 84, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.obsTxt, -2, 658, -2)).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.jLabel3, -2, 84, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.endTxt, -2, 658, -2)).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.jLabel5, -2, 84, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.telefoneTxt, -2, 236, -2))).addGap(0, 24, 32767)))));
         jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addContainerGap().addComponent(this.idTxt, -2, 22, -2).addPreferredGap(ComponentPlacement.RELATED).addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE).addComponent(this.jLabel2, -2, 22, -2).addComponent(this.nomeTxt, -2, -1, -2)).addPreferredGap(ComponentPlacement.UNRELATED).addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE).addComponent(this.jLabel5, -2, 22, -2).addComponent(this.telefoneTxt, -2, -1, -2)).addGap(9, 9, 9).addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE).addComponent(this.jLabel3, -2, 22, -2).addComponent(this.endTxt, -2, -1, -2)).addPreferredGap(ComponentPlacement.RELATED).addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE).addComponent(this.jLabel4, -2, 22, -2).addComponent(this.obsTxt, -2, -1, -2)).addPreferredGap(ComponentPlacement.RELATED, 22, 32767).addComponent(this.msgTabela).addGap(18, 18, 18).addComponent(this.jScrollPane1, -2, 208, -2).addPreferredGap(ComponentPlacement.UNRELATED).addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE).addComponent(this.botaoAlterar, -2, 38, -2).addComponent(this.botaoOK, -2, 38, -2)).addContainerGap()));
-        this.systemError.setForeground(new Color(204, 0, 0));
-        GroupLayout layout = new GroupLayout(this.getContentPane());
-        this.getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(this.jPanel1, -1, -1, 32767).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(this.systemError, -2, 751, -2).addContainerGap(-1, 32767)));
-        layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING).addGroup(layout.createSequentialGroup().addComponent(this.jPanel1, -2, -1, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.systemError, -2, 19, -2).addGap(0, 11, 32767)));
-
-        jPanel1.add(consultarPorNome);
-
+        UiComponents.styleErrorLabel(this.systemError);
+        UiComponents.applyFrameDefaults(this);
+        JPanel root = new JPanel(new java.awt.BorderLayout());
+        root.setBackground(AppTheme.BACKGROUND);
+        root.setBorder(javax.swing.BorderFactory.createEmptyBorder(AppTheme.PAD_LG, AppTheme.PAD_LG, AppTheme.PAD_LG, AppTheme.PAD_LG));
+        root.add(UiComponents.headerBar("Clientes"), java.awt.BorderLayout.NORTH);
+        root.add(this.jPanel1, java.awt.BorderLayout.CENTER);
+        root.add(this.systemError, java.awt.BorderLayout.SOUTH);
+        getContentPane().add(root);
         this.pack();
     }
 
