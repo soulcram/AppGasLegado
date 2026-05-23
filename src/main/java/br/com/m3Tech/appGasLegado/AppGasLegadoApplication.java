@@ -1,6 +1,5 @@
 package br.com.m3Tech.appGasLegado;
 
-import br.com.m3Tech.appGasLegado.ui.AppTheme;
 import br.com.m3Tech.appGasLegado.utils.AtualizarBanco;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,7 +14,6 @@ public class AppGasLegadoApplication {
 
 	public static void main(String[] args) {
 		System.setProperty("java.awt.headless", "false");
-		AppTheme.install();
 
 		SpringApplication.run(AppGasLegadoApplication.class, args);
 

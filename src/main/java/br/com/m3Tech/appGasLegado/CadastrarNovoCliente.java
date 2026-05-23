@@ -101,7 +101,7 @@ public class CadastrarNovoCliente extends JFrame {
         String telefone = this.telefoneTxt.getText();
         boolean status = false;
         int tamanho = telefone.length();
-        Color corErro = br.com.m3Tech.appGasLegado.ui.AppTheme.ERROR_FIELD;
+        Color corErro = new Color(255, 100, 100);
         if (tamanho < 10) {
             this.telefoneTxt.setBackground(corErro);
             this.msgTxt.setText("Numero de telefone errado.");
@@ -196,13 +196,15 @@ public class CadastrarNovoCliente extends JFrame {
         this.systemError = new JLabel();
         this.setDefaultCloseOperation(2);
         this.setTitle("Cadastrar Novo Cliente");
-        this.jPanel1 = br.com.m3Tech.appGasLegado.ui.UiComponents.cardPanel("Novo cliente");
+        this.jPanel1.setBackground(new Color(255, 255, 153));
+        this.jPanel1.setBorder(BorderFactory.createTitledBorder((Border)null, "Novo Cliente", 2, 1, new Font("Tahoma", 1, 14)));
         this.idClienteTxt.setFont(new Font("Tahoma", 1, 11));
         this.labelTxt.setFont(new Font("Tahoma", 1, 11));
         this.labelTxt.setText("telefone");
         this.labelTxt1.setFont(new Font("Tahoma", 1, 11));
         this.labelTxt1.setText("Nome");
-        this.jPanel2 = br.com.m3Tech.appGasLegado.ui.UiComponents.cardPanel("Endereço");
+        this.jPanel2.setBackground(new Color(255, 153, 51));
+        this.jPanel2.setBorder(BorderFactory.createTitledBorder((Border)null, "Endereço", 2, 2, new Font("Tahoma", 1, 12)));
         this.labelTxt2.setFont(new Font("Tahoma", 1, 11));
         this.labelTxt2.setText("Numero");
         this.tp_LogradouroTxt.setFont(new Font("Tahoma", 1, 11));
@@ -300,7 +302,7 @@ public class CadastrarNovoCliente extends JFrame {
             this.jTable1.getColumnModel().getColumn(3).setPreferredWidth(175);
         }
 
-        BotaoCadNovoEnd = br.com.m3Tech.appGasLegado.ui.UiComponents.secondaryButton("Cadastrar novo endereço");
+        BotaoCadNovoEnd.setText("Cadastrar Novo Endereço");
         BotaoCadNovoEnd.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 BotaoCadNovoEndActionPerformed(evt);
@@ -337,7 +339,7 @@ public class CadastrarNovoCliente extends JFrame {
                 obsTxtKeyTyped(evt);
             }
         });
-        this.jButton1 = br.com.m3Tech.appGasLegado.ui.UiComponents.primaryButton("Cadastrar cliente");
+        this.jButton1.setText("Cadastrar Cliente");
         this.jButton1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -347,19 +349,11 @@ public class CadastrarNovoCliente extends JFrame {
         this.jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addContainerGap().addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addComponent(this.jPanel2, -1, -1, 32767).addGroup(jPanel1Layout.createSequentialGroup().addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING, false).addComponent(this.idClienteTxt, -2, 28, -2).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.labelTxt7).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.obsTxt)).addGroup(jPanel1Layout.createSequentialGroup().addComponent(this.labelTxt).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.telefoneTxt, -2, 129, -2).addPreferredGap(ComponentPlacement.UNRELATED).addComponent(this.labelTxt1).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.nomeTxt, -2, 446, -2))).addGap(0, 13, 32767))).addContainerGap()).addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup().addContainerGap(-1, 32767).addComponent(this.jButton1, -2, 160, -2).addGap(25, 25, 25)));
         jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addContainerGap().addComponent(this.idClienteTxt, -2, 14, -2).addPreferredGap(ComponentPlacement.RELATED).addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE).addComponent(this.labelTxt).addComponent(this.labelTxt1).addComponent(this.nomeTxt, -2, -1, -2).addComponent(this.telefoneTxt, -2, -1, -2)).addPreferredGap(ComponentPlacement.UNRELATED).addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE).addComponent(this.labelTxt7).addComponent(this.obsTxt, -2, -1, -2)).addGap(7, 7, 7).addComponent(this.jPanel2, -2, -1, -2).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.jButton1).addContainerGap(-1, 32767)));
-        br.com.m3Tech.appGasLegado.ui.UiComponents.styleErrorLabel(this.systemError);
-        br.com.m3Tech.appGasLegado.ui.UiComponents.applyFrameDefaults(this);
-        javax.swing.JPanel root = new javax.swing.JPanel(new java.awt.BorderLayout());
-        root.setBackground(br.com.m3Tech.appGasLegado.ui.AppTheme.BACKGROUND);
-        root.setBorder(javax.swing.BorderFactory.createEmptyBorder(
-                br.com.m3Tech.appGasLegado.ui.AppTheme.PAD_LG,
-                br.com.m3Tech.appGasLegado.ui.AppTheme.PAD_LG,
-                br.com.m3Tech.appGasLegado.ui.AppTheme.PAD_LG,
-                br.com.m3Tech.appGasLegado.ui.AppTheme.PAD_LG));
-        root.add(br.com.m3Tech.appGasLegado.ui.UiComponents.headerBar("Cadastrar novo cliente"), java.awt.BorderLayout.NORTH);
-        root.add(this.jPanel1, java.awt.BorderLayout.CENTER);
-        root.add(this.systemError, java.awt.BorderLayout.SOUTH);
-        this.getContentPane().add(root);
+        this.systemError.setForeground(new Color(204, 0, 0));
+        GroupLayout layout = new GroupLayout(this.getContentPane());
+        this.getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING).addGroup(layout.createSequentialGroup().addContainerGap().addGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(this.jPanel1, -1, -1, 32767).addComponent(this.systemError, -1, -1, 32767)).addContainerGap()));
+        layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(this.jPanel1, -1, -1, 32767).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.systemError, -2, 23, -2)));
         this.pack();
     }
 

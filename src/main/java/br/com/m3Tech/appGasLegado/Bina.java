@@ -4,17 +4,14 @@ import br.com.m3Tech.appGasLegado.dto.ClienteDto;
 import br.com.m3Tech.appGasLegado.entity.Config;
 import br.com.m3Tech.appGasLegado.service.ClienteService;
 import br.com.m3Tech.appGasLegado.service.ConfigService;
-import br.com.m3Tech.appGasLegado.ui.AppTheme;
-import br.com.m3Tech.appGasLegado.ui.UiComponents;
 import br.com.m3Tech.appGasLegado.utils.BinaUtils;
 import br.com.m3Tech.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import programagas.Metodos;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedWriter;
@@ -66,6 +63,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
     private JComboBox<String> cbPortas;
     private JLabel jLabel1;
     private JLabel jLabel2;
+    private JPanel jPanel1;
     private JScrollPane jScrollPane1;
     private JScrollPane jScrollPane3;
     private JLabel msgTxt;
@@ -141,13 +139,13 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
             this.portaSerial = (SerialPort)portId.open("SimpleReadApp", 1000);
             this.msgTxt.setText("Conectado");
             atLog.append("Conectado com sucesso\r\n");
-            this.msgTxt.setForeground(AppTheme.SUCCESS);
+            this.msgTxt.setForeground(Color.green);
         } catch (PortInUseException var5) {
             salvarErro(var5.getMessage());
             log.error("Erros",var5);
             this.msgTxt.setText("Erro");
             atLog.append("Erro ao conectar, porta em uso.\r\n");
-            this.msgTxt.setForeground(AppTheme.DANGER);
+            this.msgTxt.setForeground(Color.red);
             this.systemError.setText(var5.toString());
         }
 
@@ -157,7 +155,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
             log.error("Erros",var4);
             salvarErro(var4.getMessage());
             this.msgTxt.setText("Erro");
-            this.msgTxt.setForeground(AppTheme.DANGER);
+            this.msgTxt.setForeground(Color.red);
             this.systemError.setText(var4.toString());
         }
 
@@ -167,7 +165,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
             log.error("Erros",var3);
             salvarErro(var3.getMessage());
             this.msgTxt.setText("Erro");
-            this.msgTxt.setForeground(AppTheme.DANGER);
+            this.msgTxt.setForeground(Color.red);
             this.systemError.setText(var3.toString());
         }
 
@@ -181,7 +179,7 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
             log.error("Erros",var2);
             salvarErro(var2.getMessage());
             this.msgTxt.setText("Erro");
-            this.msgTxt.setForeground(AppTheme.DANGER);
+            this.msgTxt.setForeground(Color.red);
             this.systemError.setText(var2.toString());
         }
 
@@ -190,34 +188,34 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
     }
 
     private void initComponents() {
+        this.jPanel1 = new JPanel();
         this.cbPortas = new JComboBox();
-        this.jLabel1 = new JLabel("Porta COM");
-        this.bConectar = UiComponents.primaryButton("Conectar");
+        this.jLabel1 = new JLabel();
+        this.bConectar = new JButton();
         this.jScrollPane1 = new JScrollPane();
         this.tBina = new JTable();
         this.systemError = new JLabel();
-        this.msgTxt = new JLabel("Aguardando conexão...");
-        this.bSalvar = UiComponents.secondaryButton("Salvar porta");
-        this.jLabel2 = new JLabel("Log");
+        this.msgTxt = new JLabel();
+        this.bSalvar = new JButton();
+        this.jLabel2 = new JLabel();
         this.jScrollPane3 = new JScrollPane();
         atLog = new JTextArea();
-        this.SalvarErro = UiComponents.secondaryButton("Salvar erro");
-
-        this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        this.SalvarErro = new JButton();
+        this.setDefaultCloseOperation(2);
         this.setTitle("Bina");
-        UiComponents.applyFrameDefaults(this);
-
-        jLabel1.setFont(AppTheme.fontLabelBold());
-        jLabel2.setFont(AppTheme.fontLabelBold());
-        msgTxt.setFont(AppTheme.fontLabelBold());
-        msgTxt.setForeground(AppTheme.SUCCESS);
-        UiComponents.styleErrorLabel(systemError);
-
+        this.jPanel1.setBackground(new Color(255, 255, 255));
+        this.cbPortas.setFont(new Font("Tahoma", 1, 12));
+        this.cbPortas.setForeground(new Color(0, 0, 204));
+        this.jLabel1.setFont(new Font("Tahoma", 1, 12));
+        this.jLabel1.setText("Porta Comm");
+        this.bConectar.setText("Conectar");
         this.bConectar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 bConectarActionPerformed(evt);
             }
         });
+        this.tBina.setFont(new Font("Tahoma", 1, 12));
+        this.tBina.setForeground(new Color(0, 0, 204));
         this.tBina.setModel(new DefaultTableModel(new Object[0][], new String[]{"ID", "Tipo", "Numero"}) {
             Class[] types = new Class[]{String.class, String.class, String.class};
             boolean[] canEdit = new boolean[]{false, false, false};
@@ -230,62 +228,35 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
                 return this.canEdit[columnIndex];
             }
         });
-        UiComponents.styleTable(this.tBina);
         this.jScrollPane1.setViewportView(this.tBina);
+        this.systemError.setForeground(new Color(204, 0, 0));
+        this.msgTxt.setFont(new Font("Tahoma", 1, 12));
+        this.msgTxt.setForeground(new Color(0, 153, 0));
+        this.bSalvar.setText("Salvar");
         this.bSalvar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 bSalvarActionPerformed(evt);
             }
         });
+        this.jLabel2.setText("LOG");
         atLog.setColumns(20);
         atLog.setRows(5);
         this.jScrollPane3.setViewportView(atLog);
+        this.SalvarErro.setText("Salvar erro");
         this.SalvarErro.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 SalvarErroActionPerformed(evt);
             }
         });
-
-        JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEFT, AppTheme.PAD_SM, 0));
-        toolbar.setOpaque(false);
-        toolbar.add(jLabel1);
-        toolbar.add(cbPortas);
-        toolbar.add(bConectar);
-        toolbar.add(SalvarErro);
-
-        JPanel statusBar = new JPanel(new BorderLayout());
-        statusBar.setOpaque(false);
-        statusBar.add(msgTxt, BorderLayout.WEST);
-        statusBar.add(systemError, BorderLayout.CENTER);
-        statusBar.add(bSalvar, BorderLayout.EAST);
-
-        JPanel callsCard = UiComponents.cardPanel("Chamadas");
-        callsCard.setLayout(new BorderLayout());
-        callsCard.add(jScrollPane1, BorderLayout.CENTER);
-
-        JPanel logCard = UiComponents.cardPanel("Log");
-        logCard.setLayout(new BorderLayout());
-        logCard.add(jScrollPane3, BorderLayout.CENTER);
-
-        JPanel center = new JPanel(new BorderLayout(AppTheme.PAD, 0));
-        center.setOpaque(false);
-        center.add(callsCard, BorderLayout.CENTER);
-        center.add(logCard, BorderLayout.EAST);
-        logCard.setPreferredSize(new java.awt.Dimension(280, 0));
-
-        JPanel root = new JPanel(new BorderLayout(0, AppTheme.PAD));
-        root.setBackground(AppTheme.BACKGROUND);
-        root.setBorder(javax.swing.BorderFactory.createEmptyBorder(AppTheme.PAD, AppTheme.PAD, AppTheme.PAD, AppTheme.PAD));
-        root.add(UiComponents.headerBar("Bina"), BorderLayout.NORTH);
-        JPanel top = new JPanel(new BorderLayout(0, AppTheme.PAD_SM));
-        top.setOpaque(false);
-        top.add(toolbar, BorderLayout.NORTH);
-        top.add(statusBar, BorderLayout.SOUTH);
-        root.add(top, BorderLayout.NORTH);
-        root.add(center, BorderLayout.CENTER);
-        getContentPane().add(root);
-        pack();
-        setSize(Math.max(getWidth(), 720), Math.max(getHeight(), 520));
+        GroupLayout jPanel1Layout = new GroupLayout(this.jPanel1);
+        this.jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addContainerGap().addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING, false).addComponent(this.jScrollPane1, Alignment.LEADING, -2, 0, 32767).addGroup(Alignment.LEADING, jPanel1Layout.createSequentialGroup().addComponent(this.jLabel1).addGap(29, 29, 29).addComponent(this.cbPortas, -2, 95, -2).addGap(39, 39, 39).addComponent(this.bConectar, -2, 109, -2)).addComponent(this.msgTxt, Alignment.LEADING, -1, -1, 32767).addGroup(jPanel1Layout.createSequentialGroup().addGap(273, 273, 273).addComponent(this.systemError, -1, -1, 32767).addPreferredGap(ComponentPlacement.RELATED).addComponent(this.bSalvar, -2, 73, -2))).addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addGap(182, 182, 182).addComponent(this.jLabel2).addContainerGap(278, 32767)).addGroup(jPanel1Layout.createSequentialGroup().addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addGap(28, 28, 28).addComponent(this.jScrollPane3)).addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup().addPreferredGap(ComponentPlacement.RELATED, -1, 32767).addComponent(this.SalvarErro))).addContainerGap()))));
+        jPanel1Layout.setVerticalGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addGroup(jPanel1Layout.createSequentialGroup().addContainerGap().addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE).addComponent(this.cbPortas, -2, -1, -2).addComponent(this.jLabel1).addComponent(this.bConectar).addComponent(this.SalvarErro)).addPreferredGap(ComponentPlacement.RELATED).addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING).addComponent(this.msgTxt, -2, 21, -2).addComponent(this.jLabel2)).addPreferredGap(ComponentPlacement.RELATED).addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING).addComponent(this.jScrollPane1, -2, 402, -2).addComponent(this.jScrollPane3, -2, 388, -2)).addPreferredGap(ComponentPlacement.RELATED).addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING).addComponent(this.systemError, -2, 24, -2).addComponent(this.bSalvar)).addContainerGap(23, 32767)));
+        GroupLayout layout = new GroupLayout(this.getContentPane());
+        this.getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(layout.createParallelGroup(Alignment.LEADING).addComponent(this.jPanel1, -1, -1, 32767));
+        layout.setVerticalGroup(layout.createParallelGroup(Alignment.LEADING).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(this.jPanel1, -1, -1, 32767).addContainerGap()));
+        this.pack();
     }
 
     private void bConectarActionPerformed(ActionEvent evt) {
@@ -348,7 +319,22 @@ public class Bina extends JFrame implements Runnable, SerialPortEventListener {
     }
 
     public static void main(String[] args) {
-        AppTheme.install();
+        try {
+            UIManager.LookAndFeelInfo[] var1 = UIManager.getInstalledLookAndFeels();
+            int var2 = var1.length;
+
+            for(int var3 = 0; var3 < var2; ++var3) {
+                UIManager.LookAndFeelInfo info = var1[var3];
+                if ("Nimbus".equals(info.getName())) {
+                    UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException | ClassNotFoundException var5) {
+            log.error("Erros",var5);
+            Logger.getLogger(programagas.Bina.class.getName()).log(Level.SEVERE, (String)null, var5);
+        }
+
         EventQueue.invokeLater(() -> {
             (new programagas.Bina()).setVisible(true);
         });
