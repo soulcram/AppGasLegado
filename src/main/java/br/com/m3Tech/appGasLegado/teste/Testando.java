@@ -16,10 +16,18 @@ public class Testando {
 
         String exibirTabelas = "SELECT TABLENAME FROM SYS.SYSTABLES WHERE TABLETYPE = 'T'";
 
-        String exibirColunas = "SELECT c.COLUMNNAME, c.COLUMNNUMBER, c.COLUMNDATATYPE \n" +
+        String exibirColunas = "SELECT c.COLUMNNAME, c.COLUMNNUMBER, c.COLUMNDATATYPE, C.* \n" +
                 "FROM SYS.SYSCOLUMNS c\n" +
                 "JOIN SYS.SYSTABLES t ON c.REFERENCEID = t.TABLEID\n" +
-                "WHERE t.TABLENAME = 'PEDIDOS'";
+                "WHERE t.TABLENAME = 'CLIENTES'";
+
+        String verificarColuna = "SELECT COLUMNDATATYPE\n" +
+                "FROM SYS.SYSCOLUMNS C\n" +
+                "INNER JOIN SYS.SYSTABLES T \n" +
+                "    ON C.REFERENCEID = T.TABLEID\n" +
+                "WHERE T.TABLENAME = 'PEDIDOS'\n" +
+                "  AND C.COLUMNNAME = 'OBSERVACAO' " +
+                "AND CAST(COLUMNDATATYPE AS VARCHAR(50)) <> 'VARCHAR(50)'";
 
         String configs = "SELECT ID_CONFIG, DATA, IMPRESSORA, NOMEPC, PORTA, TEL_INI, TEL_FIM FROM CONFIG order by ID_CONFIG FETCH FIRST 1 ROWS ONLY";
 
@@ -35,16 +43,20 @@ public class Testando {
 //        Conectar.alterar(inserindoColuna);
 
 //          AtualizarBanco.atualizar();
-        ResultSet rs = Conectar.pesquisar(encontrarPedidoCliente);
+        ResultSet rs = Conectar.pesquisar(exibirTabelas);
        if(rs == null){
            System.out.println("Result Set nulo.");
            return;
        }
        while(rs.next()){
 //           System.out.println(rs.getString("TABLENAME"));
-//          System.out.println(rs.getString("COLUMNNAME"));
-//           System.out.println(rs.getString("COLUMNNUMBER"));
-//           System.out.println(rs.getString("COLUMNDATATYPE"));
+          System.out.println(rs.getString(1));
+//           System.out.println(rs.getString(2));
+//           System.out.println(rs.getString(3));
+//           System.out.println(rs.getString(4));
+//           System.out.println(rs.getString(5));
+//           System.out.println(rs.getString(6));
+
 //           System.out.println(rs.getString("TEL_INI"));
 //           System.out.println(rs.getString("TEL_FIM"));
 
@@ -63,15 +75,15 @@ public class Testando {
 //           );
 
            //TB PEDIDOS
-           System.out.println(
-                   "\n==============================\n" +
-                           "ID_CLIENTEP : " + rs.getString("ID_CLIENTEP") + "\n" +
-                           "ID_PEDIDO   : " + rs.getString("ID_PEDIDO") + "\n" +
-                           "OBSERVACAO : " + rs.getString("OBSERVACAO") + "\n" +
-                           "PEDIDO      : " + rs.getString("PEDIDO") + "\n" +
-                           "STATUS      : " + rs.getString("STATUS") + "\n" +
-                           "=============================="
-           );
+//           System.out.println(
+//                   "\n==============================\n" +
+//                           "ID_CLIENTEP : " + rs.getString("ID_CLIENTEP") + "\n" +
+//                           "ID_PEDIDO   : " + rs.getString("ID_PEDIDO") + "\n" +
+//                           "OBSERVACAO : " + rs.getString("OBSERVACAO") + "\n" +
+//                           "PEDIDO      : " + rs.getString("PEDIDO") + "\n" +
+//                           "STATUS      : " + rs.getString("STATUS") + "\n" +
+//                           "=============================="
+//           );
            System.out.println();
        }
     }
