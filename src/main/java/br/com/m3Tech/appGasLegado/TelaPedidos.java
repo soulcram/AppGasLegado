@@ -5,7 +5,8 @@ import br.com.m3Tech.appGasLegado.utils.ImpressoraUtils;
 import br.com.m3Tech.appGasLegado.utils.PedidosUtils;
 import br.com.m3Tech.utils.StringUtils;
 import org.apache.commons.lang3.BooleanUtils;
-
+import java.text.NumberFormat;
+import java.util.Locale;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -426,7 +427,7 @@ public class TelaPedidos extends JFrame {
                 Date date = new Date();
                 DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
                 String hoje = dateFormat.format(date);
-                String sql = "INSERT INTO PEDIDOS (DIA,ID_CLIENTEp,STATUS,  PEDIDO, OBSERVACAO,entregador,formadepagamento,VALOR) VALUES ('" + hoje + "'," + this.id_cliente + ", 'Aberto', '" + pedido + "', '" + this.obsPedido + "','Funcionário','" + fDp + "', " + this.txtTotal.getText() + ")";
+                String sql = "INSERT INTO PEDIDOS (DIA,ID_CLIENTEp,STATUS,  PEDIDO, OBSERVACAO,entregador,formadepagamento,VALOR) VALUES ('" + hoje + "'," + this.id_cliente + ", 'Aberto', '" + pedido + "', '" + this.obsPedido + "','Funcionário','" + fDp + "', " + getValor(this.txtTotal.getText()) + ")";
 
                 try {
                     Conectar.alterar(sql);
@@ -506,6 +507,11 @@ public class TelaPedidos extends JFrame {
 
     }
 
+    private String getValor(String valor) {
+        return valor.replaceAll("\\.", "")
+                .replaceAll(",", ".");
+    }
+
     private void jButton1ActionPerformed(ActionEvent evt) {
         DefaultTableModel model = (DefaultTableModel)this.jTable2.getModel();
         String[] linha = new String[]{"", "1"};
@@ -513,6 +519,11 @@ public class TelaPedidos extends JFrame {
     }
 
     private void jButton2ActionPerformed(ActionEvent evt) {
+
+        NumberFormat nf = NumberFormat.getNumberInstance(new Locale("pt", "BR"));
+        nf.setMinimumFractionDigits(2);
+        nf.setMaximumFractionDigits(2);
+
         int linhas = this.jTable2.getRowCount();
         double total = 0.0;
         System.out.println(linhas);
@@ -540,7 +551,7 @@ public class TelaPedidos extends JFrame {
                 total += valor * (double)multiplicador;
             }
 
-            this.txtTotal.setText(Double.toString(total).replace(",", ".") + "0");
+            this.txtTotal.setText(nf.format(total));
         }
 
     }
